@@ -297,7 +297,7 @@ def gather_srp_perf(configpath, arrayid):
 
     logger.debug("Collecting SRP Performance")
 
-    # Gather our BE keys
+    # Gather our SRP keys
     srps = conn.performance.get_storage_resource_pool_keys(array_id=arrayid)
     logger.debug(srps)
 
@@ -321,6 +321,40 @@ def gather_srp_perf(configpath, arrayid):
     logger.debug("Completed SRP Performance Gather")
 
 
+def gather_storagegroup_perf(configpath, arrayid):
+    """ Collects SRP Performance Statistics """
+    logger = logging.getLogger('discovery')
+    logger.debug("Starting Storage Group Perf Stats Collection ")
+
+    PyU4V.univmax_conn.file_path = configpath
+    conn = PyU4V.U4VConn()
+
+    logger.debug("Collecting Storage Group Performance")
+
+    # Gather our Group keys
+    groups = conn.performance.get_storage_group_keys(array_id=arrayid)
+    logger.debug(groups)
+
+    for group in groups:
+
+        sg_id = group['storageGroupId']
+        try:
+            metrics = conn.performance.get_storage_group_stats(
+                           metrics='KPI',
+                           array_id=arrayid,
+                           storage_group_id=sg_id,
+                           recency=5)
+        except PyU4V.utils.exception.VolumeBackendAPIException:
+            logger.info(f"Metrics not read for {sg_id}, recency not met")
+            continue
+
+        logger.debug(metrics)
+
+        process_perf_results(metrics, "StorageGroup")
+
+    logger.debug("Completed Storage Group Performance Gather")
+
+
 def do_array_discovery(configpath, arrayid):
     """ Perform a discovery of all Arrays attached to U4V """
     logger = logging.getLogger('discovery')
@@ -339,6 +373,28 @@ def do_array_discovery(configpath, arrayid):
         logger.debug(result)
 
     logger.debug("Completed discovery for Array")
+    return result
+
+
+def do_storagegroup_discovery(configpath, arrayid):
+    """ Perform a discovery of all Arrays attached to U4V """
+    logger = logging.getLogger('discovery')
+    logger.debug("Starting Storage Group Discovery")
+
+    PyU4V.univmax_conn.file_path = configpath
+    conn = PyU4V.U4VConn()
+
+    result = list()
+    groups = conn.performance.get_storage_group_keys(array_id=arrayid)
+    logger.debug(groups)
+
+    for group in groups:
+        sg_id = group['storageGroupId']
+        result.append({'{#ARRAYID}': arrayid,
+                       '{#SGID}': sg_id})
+
+    logger.debug(result)
+    logger.debug("Completed Storage Group Discovery")
     return result
 
 
@@ -458,6 +514,9 @@ def main():
     parser.add_argument('--srp', action='store_true',
                         help="Perform SRP discovery")
 
+    parser.add_argument('--storagegroup', action='store_true',
+                        help="Perform Storage Group discovery")
+
     args = parser.parse_args()
 
     logger.debug("Arguments parsed: %s" % str(args))
@@ -468,9 +527,14 @@ def main():
             logger.info("Executing Director Discovery")
             result = do_fe_discovery(args.configpath, args.array)
             result += do_be_discovery(args.configpath, args.array)
+
         elif args.srp:
             logger.info("Executing SRP Discovery")
             result = do_srp_discovery(args.configpath, args.array)
+
+        elif args.storagegroup:
+            logger.info("Executing StorageGroup Discovery")
+            result = do_storagegroup_discovery(args.configpath, args.array)
 
         else:
             logger.info("Executing Array Discovery")
@@ -486,6 +550,7 @@ def main():
             result = gather_fe_perf(args.configpath, args.array)
             result = gather_be_perf(args.configpath, args.array)
             result = gather_srp_perf(args.configpath, args.array)
+            result = gather_storagegroup_perf(args.configpath, args.array)
 
     logger.info("Complete")
 
