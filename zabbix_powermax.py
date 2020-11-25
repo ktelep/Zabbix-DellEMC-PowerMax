@@ -96,12 +96,16 @@ def gather_array_health(configpath, arrayid):
     logger.debug("Completed Health Score Gathering")
 
 
+# This dict maps the category to the identifiers in the result set
+# that are used in identifiers for Zabbix keys
+
 category_map = {"Array": ["array_id"],
                 "FEDirector": ["director_id"],
                 "FEPort": ["director_id", "port_id"],
                 "BEDirector": ["director_id"],
                 "BEPort": ["director_id", "port_id"],
-                "StorageGroup": ["storage_group_id"]}
+                "StorageGroup": ["storage_group_id"],
+                "SRP": ["srp_id"]}
 
 
 def process_perf_results(metrics, category):
@@ -109,13 +113,16 @@ def process_perf_results(metrics, category):
     logger = logging.getLogger('discovery')
     host = host_base.format(arrayid=metrics['array_id'])
 
-    # Based on category, pull our our identifiers
+    # Based on category, pull our our identifiers and format
     id_values = list()
     for i in category_map[category]:
         id_values.append(metrics[i])
 
     ident = "-".join(id_values)
     cat = category.lower()
+
+    # Drop the ms from our timestamp, we've only got
+    # 5 minute granularity at best here
     timestamp = fix_ts(metrics['timestamp'])
 
     metric_data = metrics['result'][0]
@@ -280,6 +287,40 @@ def gather_be_perf(configpath, arrayid):
     logger.debug("Completed BE Performance Gathering")
 
 
+def gather_srp_perf(configpath, arrayid):
+    """ Collects SRP Performance Statistics """
+    logger = logging.getLogger('discovery')
+    logger.debug("Starting SRP Perf Stats Collection ")
+
+    PyU4V.univmax_conn.file_path = configpath
+    conn = PyU4V.U4VConn()
+
+    logger.debug("Collecting SRP Performance")
+
+    # Gather our BE keys
+    srps = conn.performance.get_storage_resource_pool_keys(array_id=arrayid)
+    logger.debug(srps)
+
+    for pool in srps:
+
+        srp_id = pool['srpId']
+        try:
+            metrics = conn.performance.get_storage_resource_pool_stats(
+                           metrics='KPI',
+                           array_id=arrayid,
+                           srp_id=srp_id,
+                           recency=5)
+        except PyU4V.utils.exception.VolumeBackendAPIException:
+            logger.info("Metrics not read, recency not met")
+            continue
+
+        logger.debug(metrics)
+
+        process_perf_results(metrics, "SRP")
+
+    logger.debug("Completed SRP Performance Gather")
+
+
 def do_array_discovery(configpath, arrayid):
     """ Perform a discovery of all Arrays attached to U4V """
     logger = logging.getLogger('discovery')
@@ -389,6 +430,7 @@ def do_srp_discovery(configpath, arrayid):
     logger.debug("Completed discovery for SRPs")
     return result
 
+
 def main():
 
     log_file = '/tmp/zabbix_powermax.log'
@@ -443,6 +485,7 @@ def main():
             result = gather_array_perf(args.configpath, args.array)
             result = gather_fe_perf(args.configpath, args.array)
             result = gather_be_perf(args.configpath, args.array)
+            result = gather_srp_perf(args.configpath, args.array)
 
     logger.info("Complete")
 
