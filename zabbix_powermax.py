@@ -369,6 +369,26 @@ def do_fe_discovery(configpath, arrayid):
     return result
 
 
+def do_srp_discovery(configpath, arrayid):
+    """ Perform discovery of all SRPs in the array """
+    logger = logging.getLogger('discovery')
+    logger.debug("Starting discovery for FE Adapters")
+
+    PyU4V.univmax_conn.file_path = configpath
+    conn = PyU4V.U4VConn()
+
+    result = list()
+    srps = conn.performance.get_storage_resource_pool_keys(array_id=arrayid)
+    logger.debug(srps)
+
+    for pool in srps:
+        result.append({'{#ARRAYID}': arrayid,
+                       '{#SRPID}': pool['srpId']})
+
+    logger.debug(result)
+    logger.debug("Completed discovery for SRPs")
+    return result
+
 def main():
 
     log_file = '/tmp/zabbix_powermax.log'
@@ -393,6 +413,9 @@ def main():
     parser.add_argument('--director', action='store_true',
                         help="Perform director discovery")
 
+    parser.add_argument('--srp', action='store_true',
+                        help="Perform SRP discovery")
+
     args = parser.parse_args()
 
     logger.debug("Arguments parsed: %s" % str(args))
@@ -403,6 +426,10 @@ def main():
             logger.info("Executing Director Discovery")
             result = do_fe_discovery(args.configpath, args.array)
             result += do_be_discovery(args.configpath, args.array)
+        elif args.srp:
+            logger.info("Executing SRP Discovery")
+            result = do_srp_discovery(args.configpath, args.array)
+
         else:
             logger.info("Executing Array Discovery")
             result = do_array_discovery(args.configpath, args.array)
