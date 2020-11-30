@@ -12,6 +12,7 @@ from pyzabbix import ZabbixMetric, ZabbixSender
 log_level = logging.DEBUG
 key_base = 'dellemc.pmax.'
 host_base = 'PowerMax {arrayid}'
+metric_recency = 15
 
 
 def log_exception_handler(type, value, tb):
@@ -104,8 +105,13 @@ category_map = {"Array": ["array_id"],
                 "FEPort": ["director_id", "port_id"],
                 "BEDirector": ["director_id"],
                 "BEPort": ["director_id", "port_id"],
+                "RDFDirector": ["director_id"],
+                "RDFPort": ["director_id", "port_id"],
+                "IMDirector": ["director_id"],
+                "EDSDirector": ["director_id"],
                 "StorageGroup": ["storage_group_id"],
-                "SRP": ["srp_id"]}
+                "SRP": ["srp_id"],
+                "PortGroup": ["port_group_id"]}
 
 
 def process_perf_results(metrics, category):
@@ -137,132 +143,77 @@ def process_perf_results(metrics, category):
         logger.debug(f"Built Metric: {key} for {host}")
         send_metrics.append(ZabbixMetric(host, key, score, timestamp))
 
-    logger.debug(f"Sending Metrics for {host}")
+    logger.debug("Sending Metrics")
     res = ZabbixSender(use_config=True).send(send_metrics)
     logger.debug(res)
+    logger.debug("Completed sending Metrics")
 
 
-def gather_array_perf(configpath, arrayid):
-    """ Collects Array Level Performance Statistics """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting Array Perf Stats Collection ")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    logger.debug("Collecting Array Performance")
-
-    try:
-        metrics = conn.performance.get_array_stats(metrics='KPI',
-                                                   array_id=arrayid,
-                                                   recency=5)
-    except PyU4V.utils.exception.VolumeBackendAPIException:
-        logger.info("Metrics not read, recency not met")
-        return
-
-    logger.debug(metrics)
-
-    process_perf_results(metrics, "Array")
-
-    logger.debug("Completed Array Performance Gathering")
-
-
-def gather_fe_perf(configpath, arrayid):
+def gather_dir_perf(configpath, arrayid, category):
     """ Collects FE Level Performance Statistics """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting FE Perf Stats Collection ")
+    logger.debug(f"Starting {category} Perf Stats Collection")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
-    logger.debug("Collecting FE Performance")
+    port_cat = category.replace('Director', 'Port')
 
-    # Gather our FE keys
-    fe_adapters = conn.performance.get_frontend_director_keys(array_id=arrayid)
-    logger.debug(fe_adapters)
+    func_map = {'FEDirector':
+                {'keys': conn.performance.get_frontend_director_keys,
+                 'stats': conn.performance.get_frontend_director_stats},
+                'BEDirector':
+                {'keys': conn.performance.get_backend_director_keys,
+                 'stats': conn.performance.get_backend_director_stats},
+                'RDFDirector':
+                {'keys': conn.performance.get_rdf_director_keys,
+                 'stats': conn.performance.get_rdf_director_stats},
+                'EDSDirector':
+                {'keys': conn.performance.get_eds_director_keys,
+                 'stats': conn.performance.get_eds_director_stats},
+                'IMDirector':
+                {'keys': conn.performance.get_im_director_keys,
+                 'stats': conn.performance.get_im_director_stats},
+                'FEPort':
+                {'keys': conn.performance.get_frontend_port_keys,
+                 'stats': conn.performance.get_frontend_port_stats},
+                'BEPort':
+                {'keys': conn.performance.get_backend_port_keys,
+                 'stats': conn.performance.get_backend_port_stats},
+                'RDFPort':
+                {'keys': conn.performance.get_rdf_port_keys,
+                 'stats': conn.performance.get_rdf_port_stats}}
 
-    for adapter in fe_adapters:
+    try:
+        directors = func_map[category]['keys'](array_id=arrayid)
+        logger.debug(directors)
+    except PyU4V.utils.exception.ResourceNotFoundException:
+        logger.debug(f"No {category} Directors found")
 
-        # Director Level Stats First
-        dir_id = adapter['directorId']
-        try:
-            metrics = conn.performance.get_frontend_director_stats(
-                           director_id=dir_id,
-                           metrics='KPI',
-                           array_id=arrayid,
-                           recency=5)
-        except PyU4V.utils.exception.VolumeBackendAPIException:
-            logger.info("Metrics not read, recency not met")
-            continue
-
-        logger.debug(metrics)
-
-        process_perf_results(metrics, "FEDirector")
-
-        # Port Level Stats next
-        try:
-            ports = conn.performance.get_frontend_port_keys(dir_id,
-                                                            array_id=arrayid)
-        except PyU4V.utils.exception.ResourceNotFoundException:
-            logger.debug(f"No ports found for dir: {dir_id} may be offline")
-            continue
-
-        for port in ports:
-            port_id = port['portId']
-            try:
-                metrics = conn.performance.get_frontend_port_stats(
-                               director_id=dir_id,
-                               array_id=arrayid,
-                               port_id=port_id,
-                               metrics='KPI',
-                               recency=5)
-            except PyU4V.utils.exception.VolumeBackendAPIException:
-                logger.info("Metrics not read, recency not met")
-                continue
-
-            logger.debug(metrics)
-
-            process_perf_results(metrics, "FEPort")
-
-    logger.debug("Completed FE Performance Gathering")
-
-
-def gather_be_perf(configpath, arrayid):
-    """ Collects BE Level Performance Statistics """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting BE Perf Stats Collection ")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    logger.debug("Collecting BE Performance")
-
-    # Gather our BE keys
-    be_directors = conn.performance.get_backend_director_keys(array_id=arrayid)
-    logger.debug(be_directors)
-
-    for director in be_directors:
-
-        # Director Level Stats First
+    for director in directors:
         dir_id = director['directorId']
+
         try:
-            metrics = conn.performance.get_backend_director_stats(
-                           director_id=dir_id,
-                           metrics='KPI',
-                           array_id=arrayid,
-                           recency=5)
+            metrics = func_map[category]['stats'](array_id=arrayid,
+                                                  director_id=dir_id,
+                                                  metrics='KPI',
+                                                  recency=metric_recency)
         except PyU4V.utils.exception.VolumeBackendAPIException:
-            logger.info("Metrics not read, recency not met")
-            continue
+            logger.info("Current metrics do not meet recency requirements")
+            break
 
         logger.debug(metrics)
 
-        process_perf_results(metrics, "BEDirector")
+        process_perf_results(metrics, category)
 
-        # Port Level Stats next
+        # Port Level Stats (if they exist)
         try:
-            ports = conn.performance.get_backend_port_keys(dir_id,
-                                                           array_id=arrayid)
+            if port_cat in func_map:
+                ports = func_map[port_cat]['keys'](array_id=arrayid,
+                                                   director_id=dir_id)
+                logger.debug(ports)
+            else:
+                ports = list()
         except PyU4V.utils.exception.ResourceNotFoundException:
             logger.debug(f"No ports found for dir: {dir_id} may be offline")
             continue
@@ -270,89 +221,83 @@ def gather_be_perf(configpath, arrayid):
         for port in ports:
             port_id = port['portId']
             try:
-                metrics = conn.performance.get_backend_port_stats(
+                metrics = func_map[port_cat]['stats'](
                                director_id=dir_id,
                                array_id=arrayid,
                                port_id=port_id,
                                metrics='KPI',
-                               recency=5)
+                               recency=metric_recency)
             except PyU4V.utils.exception.VolumeBackendAPIException:
                 logger.info("Metrics not read, recency not met")
                 continue
 
             logger.debug(metrics)
 
-            process_perf_results(metrics, "BEPort")
+            process_perf_results(metrics, port_cat)
 
-    logger.debug("Completed BE Performance Gathering")
+    logger.debug("Completed Director Performance Gathering")
 
 
-def gather_srp_perf(configpath, arrayid):
-    """ Collects SRP Performance Statistics """
+def gather_perf(configpath, arrayid, category):
     logger = logging.getLogger('discovery')
-    logger.debug("Starting SRP Perf Stats Collection ")
+    logger.info(f"Starting {category} Stats Collection ")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
-    logger.debug("Collecting SRP Performance")
+    func_map = {'PortGroup':
+                {'keys': conn.performance.get_port_group_keys,
+                 'stats': conn.performance.get_port_group_stats,
+                 'args': {'port_group_id': 'portGroupId'}},
+                'SRP':
+                {'keys': conn.performance.get_storage_resource_pool_keys,
+                 'stats': conn.performance.get_storage_resource_pool_stats,
+                 'args': {'srp_id': 'srpId'}},
+                'StorageGroup':
+                {'keys': conn.performance.get_storage_group_keys,
+                 'stats': conn.performance.get_storage_group_stats,
+                 'args': {'storage_group_id': 'storageGroupId'}},
+                'Array':
+                {'keys': conn.performance.get_array_keys,
+                 'stats': conn.performance.get_array_stats,
+                 'args': {}}
+                }
 
-    # Gather our SRP keys
-    srps = conn.performance.get_storage_resource_pool_keys(array_id=arrayid)
-    logger.debug(srps)
+    try:
+        if 'Array' not in category:
+            items = func_map[category]['keys'](array_id=arrayid)
+        else:
+            items = func_map[category]['keys']()
+        logger.debug(items)
+    except PyU4V.utils.exception.ResourceNotFoundException:
+        logger.info(f"No {category} found")
 
-    for pool in srps:
+    metric_params = {'recency': metric_recency,
+                     'metrics': 'KPI'}
 
-        srp_id = pool['srpId']
+    if 'Array' not in category:
+        metric_params['array_id'] = arrayid
+
+    for item in items:
+        # We need to dynamically update the dict we're using for kwargs
+        # to include the appropriate parameters for this category item
+        for m_key, i_key in func_map[category]['args'].items():
+            metric_params[m_key] = item[i_key]
+
+        logger.debug("Metric Parameters to be passed")
+        logger.debug(metric_params)
+
         try:
-            metrics = conn.performance.get_storage_resource_pool_stats(
-                           metrics='KPI',
-                           array_id=arrayid,
-                           srp_id=srp_id,
-                           recency=5)
+            metrics = func_map[category]['stats'](**metric_params)
+            logger.debug("Metrics returned")
+            logger.debug(metrics)
         except PyU4V.utils.exception.VolumeBackendAPIException:
-            logger.info("Metrics not read, recency not met")
-            continue
+            logger.info(f"Metrics not read for {category}, recency not met")
+            return
 
-        logger.debug(metrics)
+        process_perf_results(metrics, category)
 
-        process_perf_results(metrics, "SRP")
-
-    logger.debug("Completed SRP Performance Gather")
-
-
-def gather_storagegroup_perf(configpath, arrayid):
-    """ Collects SRP Performance Statistics """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting Storage Group Perf Stats Collection ")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    logger.debug("Collecting Storage Group Performance")
-
-    # Gather our Group keys
-    groups = conn.performance.get_storage_group_keys(array_id=arrayid)
-    logger.debug(groups)
-
-    for group in groups:
-
-        sg_id = group['storageGroupId']
-        try:
-            metrics = conn.performance.get_storage_group_stats(
-                           metrics='KPI',
-                           array_id=arrayid,
-                           storage_group_id=sg_id,
-                           recency=5)
-        except PyU4V.utils.exception.VolumeBackendAPIException:
-            logger.info(f"Metrics not read for {sg_id}, recency not met")
-            continue
-
-        logger.debug(metrics)
-
-        process_perf_results(metrics, "StorageGroup")
-
-    logger.debug("Completed Storage Group Performance Gather")
+    logger.info(f"Completed {category} Stats Collection")
 
 
 def do_array_discovery(configpath, arrayid):
@@ -398,78 +343,69 @@ def do_storagegroup_discovery(configpath, arrayid):
     return result
 
 
-def do_be_discovery(configpath, arrayid):
-    """ Perform a discovery of all the BEDirectors in the array """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting discovery for BE Directors")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    result = list()
-    be_directors = conn.performance.get_backend_director_keys(array_id=arrayid)
-    logger.debug(be_directors)
-
-    for director in be_directors:
-        dir_id = director['directorId']
-        ports = None
-        try:
-            ports = conn.performance.get_backend_port_keys(dir_id)
-        except PyU4V.utils.exception.ResourceNotFoundException:
-            logger.debug(f"No ports found for director {dir_id}")
-
-        if ports:
-            for port in ports:
-                result.append({'{#ARRAYID}': arrayid,
-                               '{#BEDIRID}': dir_id,
-                               '{#BEPORTID}': port['portId']})
-        else:
-            result.append({'{#ARRAYID}': arrayid,
-                           '{#BEDIRID}': dir_id})
-
-    logger.debug(result)
-    logger.debug("Completed discovery for BE Directors")
-    return result
-
-
-def do_fe_discovery(configpath, arrayid):
+def do_director_discovery(configpath, arrayid, category):
     """ Perform a discovery of all the Directors in the array """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting discovery for FE Adapters")
+    logger.debug(f"Starting discovery for {category}")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
+    func_map = {'FEDirector':
+                {'id': '',
+                 'keys': conn.performance.get_frontend_director_keys,
+                 'ports': conn.performance.get_frontend_port_keys},
+                'BEDirector':
+                {'id': 'BE',
+                 'keys': conn.performance.get_backend_director_keys,
+                 'ports': conn.performance.get_backend_port_keys},
+                'RDFDirector':
+                {'id': 'RDF',
+                 'keys': conn.performance.get_rdf_director_keys,
+                 'ports': conn.performance.get_rdf_port_keys},
+                'EDSDirector':
+                {'id': 'EDS',
+                 'keys': conn.performance.get_eds_director_keys},
+                'IMDirector':
+                {'id': 'IM',
+                 'keys': conn.performance.get_im_director_keys}}
+
     result = list()
-    fe_adapters = conn.performance.get_frontend_director_keys(array_id=arrayid)
-    logger.debug(fe_adapters)
+    directors = func_map[category]['keys'](array_id=arrayid)
+    logger.debug(directors)
 
-    for adapter in fe_adapters:
-        dir_id = adapter['directorId']
-        ports = None
-        try:
-            ports = conn.performance.get_frontend_port_keys(dir_id)
-        except PyU4V.utils.exception.ResourceNotFoundException:
-            logger.debug(f"No ports found for director {dir_id}")
+    for director in directors:
+        dir_id = director['directorId']
+        dir_key = f"{{#{func_map[category]['id']}DIRID}}"
 
-        if ports:
-            for port in ports:
-                result.append({'{#ARRAYID}': arrayid,
-                               '{#DIRID}': dir_id,
-                               '{#PORTID}': port['portId']})
+        if 'ports' in func_map[category]:
+            ports = list()
+            try:
+                ports = func_map[category]['ports'](array_id=arrayid,
+                                                    director_id=dir_id)
+                logger.debug(ports)
+            except PyU4V.utils.exception.ResourceNotFoundException:
+                logger.debug(f"No ports found for director {dir_id}")
+
+            port_key = f"{{#{func_map[category]['id']}PORTID}}"
+            if ports:
+                for port in ports:
+                    result.append({'{#ARRAYID}': arrayid,
+                                   dir_key: dir_id,
+                                   port_key: port['portId']})
         else:
             result.append({'{#ARRAYID}': arrayid,
-                           '{#DIRID}': dir_id})
+                           dir_key: dir_id})
 
     logger.debug(result)
-    logger.debug("Completed discovery for FE Adapters")
+    logger.debug(f"Completed discovery for {category}")
     return result
 
 
 def do_srp_discovery(configpath, arrayid):
     """ Perform discovery of all SRPs in the array """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting discovery for FE Adapters")
+    logger.debug("Starting discovery for SRPs")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
@@ -485,6 +421,27 @@ def do_srp_discovery(configpath, arrayid):
     logger.debug(result)
     logger.debug("Completed discovery for SRPs")
     return result
+
+
+def do_portgroup_discovery(configpath, arrayid):
+    """ Perform discovery of all Port Groups in the array """
+    logger = logging.getLogger('discovery')
+    logger.debug("Starting port group discovery")
+
+    PyU4V.univmax_conn.file_path = configpath
+    conn = PyU4V.U4VConn()
+
+    result = list()
+    pgs = conn.performance.get_port_group_keys(array_id=arrayid)
+    logger.debug(pgs)
+
+    for pg in pgs:
+        result.append({'{#ARRAYID}': arrayid,
+                       '{#PGID}': pg['portGroupId']})
+
+    logger.debug(result)
+    logger.debug("COmpleted Port Group Discovery")
+    return(result)
 
 
 def main():
@@ -517,6 +474,9 @@ def main():
     parser.add_argument('--storagegroup', action='store_true',
                         help="Perform Storage Group discovery")
 
+    parser.add_argument('--portgroup', action='store_true',
+                        help="Perform Port Group discovery")
+
     args = parser.parse_args()
 
     logger.debug("Arguments parsed: %s" % str(args))
@@ -525,8 +485,12 @@ def main():
     if args.discovery:
         if args.director:
             logger.info("Executing Director Discovery")
-            result = do_fe_discovery(args.configpath, args.array)
-            result += do_be_discovery(args.configpath, args.array)
+            result = list()
+            for dir_cat in ['BEDirector', 'FEDirector', 'RDFDirector',
+                            'EDSDirector', 'IMDirector']:
+                result += do_director_discovery(args.configpath,
+                                                args.array,
+                                                category=dir_cat)
 
         elif args.srp:
             logger.info("Executing SRP Discovery")
@@ -536,6 +500,10 @@ def main():
             logger.info("Executing StorageGroup Discovery")
             result = do_storagegroup_discovery(args.configpath, args.array)
 
+        elif args.portgroup:
+            logger.info("Executing POrt Group Discovery")
+            result = do_portgroup_discovery(args.configpath, args.array)
+
         else:
             logger.info("Executing Array Discovery")
             result = do_array_discovery(args.configpath, args.array)
@@ -544,13 +512,20 @@ def main():
 
     else:
         if args.array:
-            logger.info("Executing Array Stats")
+
+            logger.info("Executing Stat collection")
             result = gather_array_health(args.configpath, args.array)
-            result = gather_array_perf(args.configpath, args.array)
-            result = gather_fe_perf(args.configpath, args.array)
-            result = gather_be_perf(args.configpath, args.array)
-            result = gather_srp_perf(args.configpath, args.array)
-            result = gather_storagegroup_perf(args.configpath, args.array)
+
+            # Get data for ALL director types
+            for dir_cat in ['BEDirector', 'FEDirector', 'RDFDirector',
+                            'EDSDirector', 'IMDirector']:
+                result = gather_dir_perf(args.configpath,
+                                         args.array,
+                                         category=dir_cat)
+
+            for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array']:
+                result = gather_perf(args.configpath, args.array,
+                                     category=perf_cat)
 
     logger.info("Complete")
 
