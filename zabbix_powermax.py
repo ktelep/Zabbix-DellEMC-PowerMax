@@ -118,6 +118,8 @@ category_map = {"Array": ["array_id"],
                 "EDSEmulation": ["eds_emulation_id"],
                 "IMEmulation": ["im_emulation_id"],
                 "RDFEmulation": ["rdf_emulation_id"],
+                "Host": ["host_id"],
+                "Initiator": ["initiator_id"]
                 }
 
 
@@ -292,6 +294,14 @@ def gather_perf(configpath, arrayid, category):
                 {'keys': conn.performance.get_rdf_emulation_keys,
                  'stats': conn.performance.get_rdf_emulation_stats,
                  'args': {'emulation_id': 'rdfEmulationId'}},
+                'Host':
+                {'keys': conn.performance.get_host_keys,
+                 'stats': conn.performance.get_host_stats,
+                 'args': {'host_id': 'hostId'}},
+                'Initiator':
+                {'keys': conn.performance.get_initiator_perf_keys,
+                 'stats': conn.performance.get_initiator_stats,
+                 'args': {'initiator_id': 'initiatorId'}},
                 'Array':
                 {'keys': conn.performance.get_array_keys,
                  'stats': conn.performance.get_array_stats,
@@ -464,6 +474,14 @@ def do_item_discovery(configpath, arrayid, category):
                     'keys': conn.performance.get_rdf_emulation_keys,
                     'idparam': 'rdfEmulationId',
                     'id': 'RDFEMUID'},
+                'Host': {
+                    'keys': conn.performance.get_host_keys,
+                    'idparam': 'hostId',
+                    'id': 'PMHOSTID'},
+                'Initiator': {
+                    'keys': conn.performance.get_initiator_perf_keys,
+                    'idparam': 'initiatorId',
+                    'id': 'INITID'},
                 'Board': {
                     'keys': conn.performance.get_board_keys,
                     'idparam': 'boardId',
@@ -526,6 +544,12 @@ def main():
     parser.add_argument('--portgroup', action='store_true',
                         help="Perform Port Group discovery")
 
+    parser.add_argument('--host', action='store_true',
+                        help="Perform Host discovery")
+
+    parser.add_argument('--initiator', action='store_true',
+                        help="Perform Initiator discovery")
+
     parser.add_argument('--emulation', action='store_true',
                         help="Perform Emulation discovery")
 
@@ -569,6 +593,16 @@ def main():
             result = do_item_discovery(args.configpath, args.array,
                                        category="Board")
 
+        elif args.initiator:
+            logger.info("Executing Initiator Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="Initiator")
+
+        elif args.host:
+            logger.info("Executing Host Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="Host")
+
         elif args.emulation:
             logger.info("Executing Emulation Discovery")
             result = list()
@@ -600,7 +634,7 @@ def main():
             for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array',
                              'Board', 'DiskGroup', 'BeEmulation',
                              'FeEmulation', 'EDSEmulation', 'IMEmulation',
-                             'RDFEmulation']:
+                             'RDFEmulation', 'Host', 'Initiator']:
                 result = gather_perf(args.configpath, args.array,
                                      category=perf_cat)
 
