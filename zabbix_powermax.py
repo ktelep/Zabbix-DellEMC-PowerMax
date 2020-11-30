@@ -119,7 +119,10 @@ category_map = {"Array": ["array_id"],
                 "IMEmulation": ["im_emulation_id"],
                 "RDFEmulation": ["rdf_emulation_id"],
                 "Host": ["host_id"],
-                "Initiator": ["initiator_id"]
+                "Initiator": ["initiator_id"],
+                "RDFA": ["rdfa_group_id"],
+                "RDFS": ["rdfs_group_id"],
+                "ISCSITarget": ['iscsi_target_id']
                 }
 
 
@@ -302,6 +305,18 @@ def gather_perf(configpath, arrayid, category):
                 {'keys': conn.performance.get_initiator_perf_keys,
                  'stats': conn.performance.get_initiator_stats,
                  'args': {'initiator_id': 'initiatorId'}},
+                'RDFS':
+                {'keys': conn.performance.get_rdfs_keys,
+                 'stats': conn.performance.get_rdfs_stats,
+                 'args': {'rdfs_group_id': 'rdfsGroupId'}},
+                'RDFA':
+                {'keys': conn.performance.get_rdfa_keys,
+                 'stats': conn.performance.get_rdfa_stats,
+                 'args': {'rdfa_group_id': 'rdfaGroupId'}},
+                'ISCSITarget':
+                {'keys': conn.performance.get_iscsi_target_keys,
+                 'stats': conn.performance.get_iscsi_target_stats,
+                 'args': {'iscsi_target_id': 'iscsiTargetId'}},
                 'Array':
                 {'keys': conn.performance.get_array_keys,
                  'stats': conn.performance.get_array_stats,
@@ -316,6 +331,7 @@ def gather_perf(configpath, arrayid, category):
         logger.debug(items)
     except PyU4V.utils.exception.ResourceNotFoundException:
         logger.info(f"No {category} found")
+        return
 
     metric_params = {'recency': metric_recency,
                      'metrics': 'KPI'}
@@ -482,6 +498,18 @@ def do_item_discovery(configpath, arrayid, category):
                     'keys': conn.performance.get_initiator_perf_keys,
                     'idparam': 'initiatorId',
                     'id': 'INITID'},
+                'RDFS': {
+                    'keys': conn.performance.get_rdfs_keys,
+                    'idparam': 'rdfsGroupId',
+                    'id': 'RDFSGID'},
+                'RDFA': {
+                    'keys': conn.performance.get_rdfa_keys,
+                    'idparam': 'rdfaGroupId',
+                    'id': 'RDFAGID'},
+                'ISCSITarget': {
+                    'keys': conn.performance.get_iscsi_target_keys,
+                    'idparam': 'iscsiTargetId',
+                    'id': 'ISCSITID'},
                 'Board': {
                     'keys': conn.performance.get_board_keys,
                     'idparam': 'boardId',
@@ -553,6 +581,12 @@ def main():
     parser.add_argument('--emulation', action='store_true',
                         help="Perform Emulation discovery")
 
+    parser.add_argument('--iscsi', action='store_true',
+                        help="Perform iSCSI Target discovery")
+
+    parser.add_argument('--rdf', action='store_true',
+                        help="Perform RDF discovery")
+
     args = parser.parse_args()
 
     logger.debug("Arguments parsed: %s" % str(args))
@@ -568,10 +602,21 @@ def main():
                                                 args.array,
                                                 category=dir_cat)
 
+        elif args.iscsi:
+            logger.info("Executing iSCSI Target Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="ISCSITarget")
         elif args.srp:
             logger.info("Executing SRP Discovery")
             result = do_item_discovery(args.configpath, args.array,
                                        category="SRP")
+
+        elif args.rdf:
+            logger.info("Executing RDF Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="RDFS")
+            result += do_item_discovery(args.configpath, args.array,
+                                        category="RDFA")
 
         elif args.diskgroup:
             logger.info("Executing Disk Group Discovery")
@@ -634,7 +679,8 @@ def main():
             for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array',
                              'Board', 'DiskGroup', 'BeEmulation',
                              'FeEmulation', 'EDSEmulation', 'IMEmulation',
-                             'RDFEmulation', 'Host', 'Initiator']:
+                             'RDFEmulation', 'Host', 'Initiator', 'RDFS',
+                             'RDFA', 'ISCSITarget']:
                 result = gather_perf(args.configpath, args.array,
                                      category=perf_cat)
 
