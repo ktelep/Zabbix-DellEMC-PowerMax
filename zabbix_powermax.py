@@ -99,7 +99,6 @@ def gather_array_health(configpath, arrayid):
 
 # This dict maps the category to the identifiers in the result set
 # that are used in identifiers for Zabbix keys
-
 category_map = {"Array": ["array_id"],
                 "FEDirector": ["director_id"],
                 "FEPort": ["director_id", "port_id"],
@@ -111,6 +110,8 @@ category_map = {"Array": ["array_id"],
                 "EDSDirector": ["director_id"],
                 "StorageGroup": ["storage_group_id"],
                 "SRP": ["srp_id"],
+                "Board": ["board_id"],
+                "DiskGroup": ["disk_group_id"],
                 "PortGroup": ["port_group_id"]}
 
 
@@ -257,6 +258,14 @@ def gather_perf(configpath, arrayid, category):
                 {'keys': conn.performance.get_storage_group_keys,
                  'stats': conn.performance.get_storage_group_stats,
                  'args': {'storage_group_id': 'storageGroupId'}},
+                'DiskGroup':
+                {'keys': conn.performance.get_disk_group_keys,
+                 'stats': conn.performance.get_disk_group_stats,
+                 'args': {'disk_group_id': 'diskGroupId'}},
+                'Board':
+                {'keys': conn.performance.get_board_keys,
+                 'stats': conn.performance.get_board_stats,
+                 'args': {'board_id': 'boardId'}},
                 'Array':
                 {'keys': conn.performance.get_array_keys,
                  'stats': conn.performance.get_array_stats,
@@ -321,28 +330,6 @@ def do_array_discovery(configpath, arrayid):
     return result
 
 
-def do_storagegroup_discovery(configpath, arrayid):
-    """ Perform a discovery of all Arrays attached to U4V """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting Storage Group Discovery")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    result = list()
-    groups = conn.performance.get_storage_group_keys(array_id=arrayid)
-    logger.debug(groups)
-
-    for group in groups:
-        sg_id = group['storageGroupId']
-        result.append({'{#ARRAYID}': arrayid,
-                       '{#SGID}': sg_id})
-
-    logger.debug(result)
-    logger.debug("Completed Storage Group Discovery")
-    return result
-
-
 def do_director_discovery(configpath, arrayid, category):
     """ Perform a discovery of all the Directors in the array """
     logger = logging.getLogger('discovery')
@@ -402,46 +389,56 @@ def do_director_discovery(configpath, arrayid, category):
     return result
 
 
-def do_srp_discovery(configpath, arrayid):
-    """ Perform discovery of all SRPs in the array """
+def do_item_discovery(configpath, arrayid, category):
+    """ Perform discoveyr of items on the array """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting discovery for SRPs")
+    logger.debug(f"Starting item discovery for {category}")
+
+    if 'Array' in category:  # Special case for array
+        return do_array_discovery(configpath, arrayid)
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
     result = list()
-    srps = conn.performance.get_storage_resource_pool_keys(array_id=arrayid)
-    logger.debug(srps)
 
-    for pool in srps:
+    func_map = {'PortGroup': {
+                    'keys': conn.performance.get_port_group_keys,
+                    'id': 'PGID',
+                    'idparam': 'portGroupId'},
+                'SRP': {
+                    'keys': conn.performance.get_storage_resource_pool_keys,
+                    'idparam': 'srpId',
+                    'id': 'SRPID'},
+                'DiskGroup': {
+                    'keys': conn.performance.get_disk_group_keys,
+                    'idparam': 'diskGroupId',
+                    'id': 'DISKGID'},
+                'StorageGroup': {
+                    'keys': conn.performance.get_storage_group_keys,
+                    'idparam': 'storageGroupId',
+                    'id': 'SGID'},
+                'Board': {
+                    'keys': conn.performance.get_board_keys,
+                    'idparam': 'boardId',
+                    'id': 'BOARDID'}
+                }
+
+    try:
+        items = func_map[category]['keys'](array_id=arrayid)
+        logger.debug(items)
+    except PyU4V.utils.exception.ResourceNotFoundException:
+        logger.debug(f"No {category} items found")
+        return list()
+
+    for item in items:
+        item_key = f"{{#{func_map[category]['id']}}}"
         result.append({'{#ARRAYID}': arrayid,
-                       '{#SRPID}': pool['srpId']})
+                      item_key: item[func_map[category]['idparam']]})
 
     logger.debug(result)
-    logger.debug("Completed discovery for SRPs")
+    logger.info(f"Completed discovery for {category}")
     return result
-
-
-def do_portgroup_discovery(configpath, arrayid):
-    """ Perform discovery of all Port Groups in the array """
-    logger = logging.getLogger('discovery')
-    logger.debug("Starting port group discovery")
-
-    PyU4V.univmax_conn.file_path = configpath
-    conn = PyU4V.U4VConn()
-
-    result = list()
-    pgs = conn.performance.get_port_group_keys(array_id=arrayid)
-    logger.debug(pgs)
-
-    for pg in pgs:
-        result.append({'{#ARRAYID}': arrayid,
-                       '{#PGID}': pg['portGroupId']})
-
-    logger.debug(result)
-    logger.debug("COmpleted Port Group Discovery")
-    return(result)
 
 
 def main():
@@ -471,6 +468,12 @@ def main():
     parser.add_argument('--srp', action='store_true',
                         help="Perform SRP discovery")
 
+    parser.add_argument('--board', action='store_true',
+                        help="Perform Board discovery")
+
+    parser.add_argument('--diskgroup', action='store_true',
+                        help="Perform Disk Group discovery")
+
     parser.add_argument('--storagegroup', action='store_true',
                         help="Perform Storage Group discovery")
 
@@ -494,19 +497,33 @@ def main():
 
         elif args.srp:
             logger.info("Executing SRP Discovery")
-            result = do_srp_discovery(args.configpath, args.array)
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="SRP")
+
+        elif args.diskgroup:
+            logger.info("Executing Disk Group Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="DiskGroup")
 
         elif args.storagegroup:
             logger.info("Executing StorageGroup Discovery")
-            result = do_storagegroup_discovery(args.configpath, args.array)
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="StorageGroup")
 
         elif args.portgroup:
-            logger.info("Executing POrt Group Discovery")
-            result = do_portgroup_discovery(args.configpath, args.array)
+            logger.info("Executing Port Group Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="PortGroup")
+
+        elif args.board:
+            logger.info("Executing Board Discovery")
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="Board")
 
         else:
             logger.info("Executing Array Discovery")
-            result = do_array_discovery(args.configpath, args.array)
+            result = do_item_discovery(args.configpath, args.array,
+                                       category="Array")
 
         print(zabbix_safe_output(result))
 
@@ -523,7 +540,8 @@ def main():
                                          args.array,
                                          category=dir_cat)
 
-            for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array']:
+            for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array',
+                             'Board', 'DiskGroup']:
                 result = gather_perf(args.configpath, args.array,
                                      category=perf_cat)
 
