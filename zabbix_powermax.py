@@ -112,7 +112,13 @@ category_map = {"Array": ["array_id"],
                 "SRP": ["srp_id"],
                 "Board": ["board_id"],
                 "DiskGroup": ["disk_group_id"],
-                "PortGroup": ["port_group_id"]}
+                "PortGroup": ["port_group_id"],
+                "BeEmulation": ["be_emulation_id"],
+                "FeEmulation": ["fe_emulation_id"],
+                "EDSEmulation": ["eds_emulation_id"],
+                "IMEmulation": ["im_emulation_id"],
+                "RDFEmulation": ["rdf_emulation_id"],
+                }
 
 
 def process_perf_results(metrics, category):
@@ -266,6 +272,26 @@ def gather_perf(configpath, arrayid, category):
                 {'keys': conn.performance.get_board_keys,
                  'stats': conn.performance.get_board_stats,
                  'args': {'board_id': 'boardId'}},
+                'BeEmulation':
+                {'keys': conn.performance.get_backend_emulation_keys,
+                 'stats': conn.performance.get_backend_emulation_stats,
+                 'args': {'emulation_id': 'beEmulationId'}},
+                'FeEmulation':
+                {'keys': conn.performance.get_frontend_emulation_keys,
+                 'stats': conn.performance.get_frontend_emulation_stats,
+                 'args': {'emulation_id': 'feEmulationId'}},
+                'EDSEmulation':
+                {'keys': conn.performance.get_eds_emulation_keys,
+                 'stats': conn.performance.get_eds_emulation_stats,
+                 'args': {'emulation_id': 'edsEmulationId'}},
+                'IMEmulation':
+                {'keys': conn.performance.get_im_emulation_keys,
+                 'stats': conn.performance.get_im_emulation_stats,
+                 'args': {'emulation_id': 'imEmulationId'}},
+                'RDFEmulation':
+                {'keys': conn.performance.get_rdf_emulation_keys,
+                 'stats': conn.performance.get_rdf_emulation_stats,
+                 'args': {'emulation_id': 'rdfEmulationId'}},
                 'Array':
                 {'keys': conn.performance.get_array_keys,
                  'stats': conn.performance.get_array_stats,
@@ -418,6 +444,26 @@ def do_item_discovery(configpath, arrayid, category):
                     'keys': conn.performance.get_storage_group_keys,
                     'idparam': 'storageGroupId',
                     'id': 'SGID'},
+                'BeEmulation': {
+                    'keys': conn.performance.get_backend_emulation_keys,
+                    'idparam': 'beEmulationId',
+                    'id': 'BEEMUID'},
+                'FeEmulation': {
+                    'keys': conn.performance.get_frontend_emulation_keys,
+                    'idparam': 'feEmulationId',
+                    'id': 'FEEMUID'},
+                'EDSEmulation': {
+                    'keys': conn.performance.get_eds_emulation_keys,
+                    'idparam': 'edsEmulationId',
+                    'id': 'EDSEMUID'},
+                'IMEmulation': {
+                    'keys': conn.performance.get_im_emulation_keys,
+                    'idparam': 'imEmulationId',
+                    'id': 'IMEMUID'},
+                'RDFEmulation': {
+                    'keys': conn.performance.get_rdf_emulation_keys,
+                    'idparam': 'rdfEmulationId',
+                    'id': 'RDFEMUID'},
                 'Board': {
                     'keys': conn.performance.get_board_keys,
                     'idparam': 'boardId',
@@ -480,6 +526,9 @@ def main():
     parser.add_argument('--portgroup', action='store_true',
                         help="Perform Port Group discovery")
 
+    parser.add_argument('--emulation', action='store_true',
+                        help="Perform Emulation discovery")
+
     args = parser.parse_args()
 
     logger.debug("Arguments parsed: %s" % str(args))
@@ -520,6 +569,14 @@ def main():
             result = do_item_discovery(args.configpath, args.array,
                                        category="Board")
 
+        elif args.emulation:
+            logger.info("Executing Emulation Discovery")
+            result = list()
+            for emulation in ['BeEmulation', 'FeEmulation', 'EDSEmulation',
+                              'IMEmulation', 'RDFEmulation']:
+                result += do_item_discovery(args.configpath, args.array,
+                                            category=emulation)
+
         else:
             logger.info("Executing Array Discovery")
             result = do_item_discovery(args.configpath, args.array,
@@ -541,7 +598,9 @@ def main():
                                          category=dir_cat)
 
             for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array',
-                             'Board', 'DiskGroup']:
+                             'Board', 'DiskGroup', 'BeEmulation',
+                             'FeEmulation', 'EDSEmulation', 'IMEmulation',
+                             'RDFEmulation']:
                 result = gather_perf(args.configpath, args.array,
                                      category=perf_cat)
 
