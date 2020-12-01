@@ -1,1 +1,4 @@
 PyU4V.conf
+.venv
+.vscode
+zabbix_powermax.log

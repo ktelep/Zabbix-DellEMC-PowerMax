@@ -1,5 +1,6 @@
 #!/opt/rh/rh-python36/root/usr/bin/python
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
 import sys
 import json
 import PyU4V
@@ -9,10 +10,13 @@ import logging
 import logging.handlers
 from pyzabbix import ZabbixMetric, ZabbixSender
 
+zabbix_ip = "192.168.1.215"
+zabbix_port = 10051
 log_level = logging.DEBUG
+
 key_base = 'dellemc.pmax.'
 host_base = 'PowerMax {arrayid}'
-metric_recency = 15
+metric_recency = 0  # How fresh must our statistics be
 
 
 def log_exception_handler(type, value, tb):
@@ -85,51 +89,55 @@ def gather_array_health(configpath, arrayid):
         metric_key = '{base}health.{metric}[{arrayid}]'.format(
                       base=key_base, metric=i['metric'],
                       arrayid=arrayid)
-        score = i['health_score']
-        timestamp = fix_ts(i['data_date'])
 
-        logger.debug("Sending Metric {host} - {met} - {score} - {ts}".format(
-                     host=host, met=metric_key, score=score,
-                     ts=timestamp))
-        health_metric = ZabbixMetric(host, metric_key, score, timestamp)
-        ZabbixSender(use_config=True).send([health_metric])
+        # Health Score may not be populated if we're between checks
+        if 'health_score' in i:
+            score = i['health_score']
+            timestamp = fix_ts(i['data_date'])
 
+            logger.debug(f"Sending Metric {host} - {metric_key} - "
+                         f"{score} - {timestamp}")
+            health_metric = ZabbixMetric(host, metric_key, score, timestamp)
+
+            ZabbixSender(zabbix_server=zabbix_ip,
+                         zabbix_port=zabbix_port).send([health_metric])
+        else:
+            logger.debug(f"No health score available for {i['metric']}")
     logger.debug("Completed Health Score Gathering")
-
-
-# This dict maps the category to the identifiers in the result set
-# that are used in identifiers for Zabbix keys
-category_map = {"Array": ["array_id"],
-                "FEDirector": ["director_id"],
-                "FEPort": ["director_id", "port_id"],
-                "BEDirector": ["director_id"],
-                "BEPort": ["director_id", "port_id"],
-                "RDFDirector": ["director_id"],
-                "RDFPort": ["director_id", "port_id"],
-                "IMDirector": ["director_id"],
-                "EDSDirector": ["director_id"],
-                "StorageGroup": ["storage_group_id"],
-                "SRP": ["srp_id"],
-                "Board": ["board_id"],
-                "DiskGroup": ["disk_group_id"],
-                "PortGroup": ["port_group_id"],
-                "BeEmulation": ["be_emulation_id"],
-                "FeEmulation": ["fe_emulation_id"],
-                "EDSEmulation": ["eds_emulation_id"],
-                "IMEmulation": ["im_emulation_id"],
-                "RDFEmulation": ["rdf_emulation_id"],
-                "Host": ["host_id"],
-                "Initiator": ["initiator_id"],
-                "RDFA": ["rdfa_group_id"],
-                "RDFS": ["rdfs_group_id"],
-                "ISCSITarget": ['iscsi_target_id']
-                }
 
 
 def process_perf_results(metrics, category):
 
     logger = logging.getLogger('discovery')
     host = host_base.format(arrayid=metrics['array_id'])
+
+    # This dict maps the category to the identifiers in the result set
+    # that are used in identifiers for Zabbix keys
+    category_map = {"Array": ["array_id"],
+                    "FEDirector": ["director_id"],
+                    "FEPort": ["director_id", "port_id"],
+                    "BEDirector": ["director_id"],
+                    "BEPort": ["director_id", "port_id"],
+                    "RDFDirector": ["director_id"],
+                    "RDFPort": ["director_id", "port_id"],
+                    "IMDirector": ["director_id"],
+                    "EDSDirector": ["director_id"],
+                    "StorageGroup": ["storage_group_id"],
+                    "SRP": ["srp_id"],
+                    "Board": ["board_id"],
+                    "DiskGroup": ["disk_group_id"],
+                    "PortGroup": ["port_group_id"],
+                    "BeEmulation": ["be_emulation_id"],
+                    "FeEmulation": ["fe_emulation_id"],
+                    "EDSEmulation": ["eds_emulation_id"],
+                    "IMEmulation": ["im_emulation_id"],
+                    "RDFEmulation": ["rdf_emulation_id"],
+                    "Host": ["host_id"],
+                    "Initiator": ["initiator_id"],
+                    "RDFA": ["rdfa_group_id"],
+                    "RDFS": ["rdfs_group_id"],
+                    "ISCSITarget": ['iscsi_target_id']
+                    }
 
     # Based on category, pull our our identifiers and format
     id_values = list()
@@ -156,7 +164,8 @@ def process_perf_results(metrics, category):
         send_metrics.append(ZabbixMetric(host, key, score, timestamp))
 
     logger.debug("Sending Metrics")
-    res = ZabbixSender(use_config=True).send(send_metrics)
+    res = ZabbixSender(zabbix_server=zabbix_ip,
+                       zabbix_port=zabbix_port).send(send_metrics)
     logger.debug(res)
     logger.debug("Completed sending Metrics")
 
@@ -535,7 +544,7 @@ def do_item_discovery(configpath, arrayid, category):
 
 def main():
 
-    log_file = '/tmp/zabbix_powermax.log'
+    log_file = './zabbix_powermax.log'
     setup_logging(log_file)
 
     logger = logging.getLogger('discovery')
