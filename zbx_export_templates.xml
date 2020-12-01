@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2020-11-24T19:13:48Z</date>
+    <date>2020-12-01T19:21:45Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -246,6 +246,115 @@
                                     <params>1024</params>
                                 </step>
                             </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.IOs[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.MBRead[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>1048576</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.MBs[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>1048576</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.MBWritten[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>1048576</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.PercentBusy[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Read IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.Reads[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#BEDIRID}.{#BEPORTID} WriteIOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beport.Writes[{#BEDIRID}-{#BEPORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Ports</name>
+                                </application>
+                            </applications>
                         </item_prototype>
                         <item_prototype>
                             <name>{#DIRID} Host IOs</name>
@@ -500,6 +609,158 @@
                             <applications>
                                 <application>
                                     <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>SRP Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--srp&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#SRPID} Backend MB Transferred</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.srp.BEMBTransferred[{#SRPID}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>SRPs</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>1048576</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SRPID} Backend Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.srp.BEReqs[{#SRPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>SRPs</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SRPID} Host IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.srp.HostIOs[{#SRPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>SRPs</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SRPID} Host Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.srp.HostMBs[{#SRPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>SRPs</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>1048576</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SRPID} Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.srp.ResponseTime[{#SRPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>SRPs</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Storage Group Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--storagegroup&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#SGID} Average QoS Delay Per IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.AvgQOSDelayPerIO[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Average Write Paced Delay</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.AvgWritePacedDelay[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Backend Read Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.BEReadReqs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Backend Write Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.BEWriteReqs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Backend Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.Reqs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
