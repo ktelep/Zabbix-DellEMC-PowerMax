@@ -66,6 +66,7 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
+    # s = int(time.time())    #Uncomment for testing
     return s
 
 

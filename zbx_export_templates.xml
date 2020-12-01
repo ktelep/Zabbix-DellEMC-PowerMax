@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>5.0</version>
-    <date>2020-12-01T19:21:45Z</date>
+    <version>5.2</version>
+    <date>2020-12-01T21:38:31Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -30,19 +30,34 @@
                     <name>Backend Directors</name>
                 </application>
                 <application>
-                    <name>Backend Ports</name>
+                    <name>Backend Emulation</name>
                 </application>
                 <application>
-                    <name>Cache</name>
+                    <name>Backend Ports</name>
                 </application>
                 <application>
                     <name>Disk Groups</name>
                 </application>
                 <application>
+                    <name>EDS Emulation</name>
+                </application>
+                <application>
                     <name>Frontend Directors</name>
                 </application>
                 <application>
+                    <name>Frontend Emulation</name>
+                </application>
+                <application>
                     <name>Frontend Ports</name>
+                </application>
+                <application>
+                    <name>Hosts</name>
+                </application>
+                <application>
+                    <name>IM Emulation</name>
+                </application>
+                <application>
+                    <name>Initiators</name>
                 </application>
                 <application>
                     <name>IP Interfaces</name>
@@ -51,13 +66,13 @@
                     <name>iSCSI Targets</name>
                 </application>
                 <application>
-                    <name>Masking Views</name>
-                </application>
-                <application>
                     <name>Port Groups</name>
                 </application>
                 <application>
                     <name>RDF Directors</name>
+                </application>
+                <application>
+                    <name>RDF Emulation</name>
                 </application>
                 <application>
                     <name>RDF Ports</name>
@@ -74,11 +89,14 @@
                 <application>
                     <name>Storage Groups</name>
                 </application>
-                <application>
-                    <name>Thin Pools</name>
-                </application>
             </applications>
             <discovery_rules>
+                <discovery_rule>
+                    <name>Board Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--board&quot;]</key>
+                    <delay>30m</delay>
+                </discovery_rule>
                 <discovery_rule>
                     <name>Director Discovery</name>
                     <type>EXTERNAL</type>
@@ -112,7 +130,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -131,7 +151,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -150,7 +172,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -243,7 +267,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1024</params>
+                                    <parameters>
+                                        <parameter>1024</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -275,7 +301,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -294,7 +322,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -313,7 +343,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -344,7 +376,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} WriteIOs</name>
+                            <name>Port {#BEDIRID}.{#BEPORTID} Write IOs</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.beport.Writes[{#BEDIRID}-{#BEPORTID}]</key>
                             <delay>0</delay>
@@ -383,7 +415,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -441,7 +475,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1024</params>
+                                    <parameters>
+                                        <parameter>1024</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -473,7 +509,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -492,7 +530,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -511,7 +551,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -582,7 +624,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1073741824</params>
+                                    <parameters>
+                                        <parameter>1073741824</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -615,6 +659,613 @@
                     </item_prototypes>
                 </discovery_rule>
                 <discovery_rule>
+                    <name>Disk Group Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--diskgroup&quot;]</key>
+                    <delay>30m</delay>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Emulation Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--emulation&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Backend Emulation {#BEEMUID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beemulation.PercentBusy[{#BEEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Backend Emulation {#BEEMUID} Total Work Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.beemulation.TotalWorkTime[{#BEEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Backend Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>EDS Emulation {#EDSEMUID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.edsemulation.PercentBusy[{#EDSEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>EDS Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>EDS Emulation {#EDSEMUID} Total Work Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.edsemulation.TotalWorkTime[{#EDSEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>EDS Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Frontend Emulation {#FEEMUID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feemulation.PercentBusy[{#FEEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Frontend Emulation {#FEEMUID} Total Work Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feemulation.TotalWorkTime[{#FEEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>IM Emulation {#IMEMUID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.imemuulation.PercentBusy[{#IMEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>IM Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>IM Emulation {#IMEMUID} Total Work Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.imemuulation.TotalWorkTime[{#IMEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>IM Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>RDF Emulation {#RDFEMUID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfemuulation.PercentBusy[{#RDFEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>RDF Emulation {#RDFEMUID} Total Work Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfemuulation.TotalWorkTime[{#RDFEMUID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Host Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--host&quot;]</key>
+                    <delay>10m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.HostIOs[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.HostMBReads[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.HostMBWrites[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.MBs[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Read Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.ReadResponseTime[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Read IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.Reads[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.ResponseTime[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} SysCall Count</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.SyscallCount[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.WriteResponseTime[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Host {#PMHOSTID} Write IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.host.Writes[{#PMHOSTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Hosts</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Initiator Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--initiator&quot;]</key>
+                    <delay>10m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Initiator {#INITID} IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.HostIOs[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.HostMBReads[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.HostMBWrites[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.MBs[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Read Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.ReadResponseTime[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Read IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.Reads[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.ResponseTime[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} SysCall Count</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.SyscallCount[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.WriteResponseTime[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Initiator {#INITID} Write IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.initiator.Writes[{#INITID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Initiators</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>iSCSI Target Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--iscsi&quot;]</key>
+                    <delay>30m</delay>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Port Group Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--portgroup&quot;]</key>
+                    <delay>10m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Average IO Size</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.AvgIOSize[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.IOs[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.MBRead[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.MBs[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.MBWritten[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.PercentBusy[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Read IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.Reads[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port Group {#PGID} Write IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.portgroup.Writes[{#PGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Port Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
                     <name>SRP Discovery</name>
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--srp&quot;]</key>
@@ -634,7 +1285,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -677,7 +1330,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -700,7 +1355,7 @@
                     <name>Storage Group Discovery</name>
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--storagegroup&quot;]</key>
-                    <delay>30m</delay>
+                    <delay>10m</delay>
                     <item_prototypes>
                         <item_prototype>
                             <name>{#SGID} Average QoS Delay Per IO</name>
@@ -741,6 +1396,18 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
+                            <name>{#SGID} Backend Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.BEReqs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
                             <name>{#SGID} Backend Write Requests</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.storagegroup.BEWriteReqs[{#SGID}]</key>
@@ -753,11 +1420,276 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>{#SGID} Backend Requests</name>
+                            <name>{#SGID} Cache Hits</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.storagegroup.Reqs[{#SGID}]</key>
+                            <key>dellemc.pmax.perf.storagegroup.HostHits[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Host IO Limit Percent Time Exceeded</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostIOLimitPercentTimeExceeded[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostIOs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostMBReads[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostMBs[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostMBWritten[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Cache Misses</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostMisses[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Read IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostReads[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Write IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.HostWrites[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Cache Percent Hits</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.PercentHit[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Cache Percent Misses</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.PercentMisses[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Percent Read</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.PercentRead[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Percent Write</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.PercentWrite[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} RDF Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.RdfResponseTime[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} RDFS Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.RDFS_WriteResponseTime[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Read Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.ReadResponseTime[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.ResponseTime[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} VAAI Total Command Count</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.VAAITotalCommandCount[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Write Pending Count</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.WPCount[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Write Paced Delay</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.WritePacedDelay[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -859,7 +1791,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1073741824</params>
+                                    <parameters>
+                                        <parameter>1073741824</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -904,7 +1838,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1048576</params>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1000,7 +1936,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1019,7 +1957,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1038,7 +1978,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1057,7 +1999,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1100,7 +2044,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1119,7 +2065,9 @@
                             <preprocessing>
                                 <step>
                                     <type>MULTIPLIER</type>
-                                    <params>1099511627776</params>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
                         </item_prototype>
@@ -1149,6 +2097,29 @@
                             </applications>
                         </item_prototype>
                     </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>Usable Capacity {#ARRAYID}</name>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.UsableCapacityTB[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.UsedUsableCapTB[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                 </discovery_rule>
             </discovery_rules>
         </template>
