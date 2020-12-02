@@ -3,6 +3,7 @@
 
 import sys
 import json
+import time
 import PyU4V
 import argparse
 import traceback
@@ -10,16 +11,31 @@ import logging
 import logging.handlers
 from pyzabbix import ZabbixMetric, ZabbixSender
 
+# Update to include your Zabbix Server IP and Port
 zabbix_ip = "192.168.1.215"
 zabbix_port = 10051
-log_level = logging.DEBUG
 
-key_base = 'dellemc.pmax.'
+# Logging Level INFO as default, change to DEBUG for more
+# detailed info or troubleshooting
+log_level = logging.DEBUG
+log_file = "/tmp/zabbix_powermax.log"
+
+# Host Base is the pattern used to define the Array in Zabbix
+# it is case-sensitive
 host_base = 'PowerMax {arrayid}'
-metric_recency = 0  # How fresh must our statistics be
+
+# Base name for the keys created, you can customize if you don't like
+# the default
+key_base = 'dellemc.pmax.'
+
+# Metric recency is used to determine how "fresh" our stats must be
+#  5 is the default (5 minutes), use 0 for testing.  Note this does
+# not change how often diagnostic data is collected ON the array
+metric_recency = 0
 
 
 def log_exception_handler(type, value, tb):
+    """ Handle all tracebacks and exceptions going to the logfile """
     logger = logging.getLogger('discovery')
     # Dump the traceback
     logger.exception("Uncaught exception: {0}".format(str(value)))
@@ -48,16 +64,18 @@ def setup_logging(log_file):
 
 
 def generate_metric_key(base, category, metric, identifier):
+    """ Generate a Zabbix formatted key """
     metric_key = f'{base}perf.{category}.{metric}[{identifier}]'
     return metric_key
 
 
 def zabbix_safe_output(data):
-    """ Generate JSON output for zabbix from a passed in list of dicts """
+    """ Generate JSON output for zabbix from a passed in list of dicts
+        This is Zabbix 4.x and higher compatible """
+
     logger = logging.getLogger('discovery')
     logger.info("Generating output")
     output = json.dumps({"data": data}, indent=4, separators=(',', ': '))
-
     logger.debug(json.dumps({"data": data}))
 
     return output
@@ -66,14 +84,14 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
-    # s = int(time.time())    #Uncomment for testing
+    s = int(time.time())    # Uncomment for testing
     return s
 
 
 def gather_array_health(configpath, arrayid):
     """ Collects Array Health Scores """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting Health Score Gathering")
+    logger.info("Starting Health Score Gathering")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
@@ -91,7 +109,8 @@ def gather_array_health(configpath, arrayid):
                       base=key_base, metric=i['metric'],
                       arrayid=arrayid)
 
-        # Health Score may not be populated if we're between checks
+        # Health Score may not be populated if we're between system checks
+        # So valide it's there before we try to send it
         if 'health_score' in i:
             score = i['health_score']
             timestamp = fix_ts(i['data_date'])
@@ -104,11 +123,11 @@ def gather_array_health(configpath, arrayid):
                          zabbix_port=zabbix_port).send([health_metric])
         else:
             logger.debug(f"No health score available for {i['metric']}")
-    logger.debug("Completed Health Score Gathering")
+    logger.info("Completed Health Score Gathering")
 
 
 def process_perf_results(metrics, category):
-
+    """ Process metrics collected from the _stats function by category """
     logger = logging.getLogger('discovery')
     host = host_base.format(arrayid=metrics['array_id'])
 
@@ -155,6 +174,7 @@ def process_perf_results(metrics, category):
     metric_data = metrics['result'][0]
 
     send_metrics = list()
+    # Bundle up all our metrics into a single list to send to Zabbix
     for metric, score in metric_data.items():
         if 'timestamp' in metric:    # ignore the second timestamp
             continue
@@ -165,22 +185,29 @@ def process_perf_results(metrics, category):
         send_metrics.append(ZabbixMetric(host, key, score, timestamp))
 
     logger.debug("Sending Metrics")
+
+    # Send the actual metrics list
     res = ZabbixSender(zabbix_server=zabbix_ip,
                        zabbix_port=zabbix_port).send(send_metrics)
-    logger.debug(res)
+    logger.info(res)
     logger.debug("Completed sending Metrics")
 
 
 def gather_dir_perf(configpath, arrayid, category):
-    """ Collects FE Level Performance Statistics """
+    """ Collects Director Level Performance Statistics """
     logger = logging.getLogger('discovery')
-    logger.debug(f"Starting {category} Perf Stats Collection")
+    logger.info(f"Starting {category} Perf Stats Collection")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
+    # Map our function to to it's matching ports
+    # FEDirector = FEPorts, etc..
     port_cat = category.replace('Director', 'Port')
 
+    # Function map to make this a generalized function vs. having
+    # an individual one.   PyU4V provides a generalized function but
+    # it seems to be troublesome.
     func_map = {'FEDirector':
                 {'keys': conn.performance.get_frontend_director_keys,
                  'stats': conn.performance.get_frontend_director_stats},
@@ -206,15 +233,19 @@ def gather_dir_perf(configpath, arrayid, category):
                 {'keys': conn.performance.get_rdf_port_keys,
                  'stats': conn.performance.get_rdf_port_stats}}
 
+    # Gather the keys for the director, this will throw an exception if
+    # the box doesn't have a specific director type (like RDF)
     try:
         directors = func_map[category]['keys'](array_id=arrayid)
         logger.debug(directors)
     except PyU4V.utils.exception.ResourceNotFoundException:
-        logger.debug(f"No {category} Directors found")
+        logger.info(f"No {category} Directors found")
 
     for director in directors:
         dir_id = director['directorId']
+        logger.info(f"Collecting for {category} director {dir_id}")
 
+        # Gather metrics, but gracefully handle if they're not recent enough
         try:
             metrics = func_map[category]['stats'](array_id=arrayid,
                                                   director_id=dir_id,
@@ -226,9 +257,11 @@ def gather_dir_perf(configpath, arrayid, category):
 
         logger.debug(metrics)
 
+        # Send them off to be processed and sent to Zabbix
         process_perf_results(metrics, category)
 
-        # Port Level Stats (if they exist)
+        # Port Level Stats (if they exist) follows the same pattern
+        # but not all directors have ports (EDS and IM for ex.)
         try:
             if port_cat in func_map:
                 ports = func_map[port_cat]['keys'](array_id=arrayid,
@@ -242,6 +275,8 @@ def gather_dir_perf(configpath, arrayid, category):
 
         for port in ports:
             port_id = port['portId']
+            logger.info(f"Collecting metrics for {category}"
+                        f" {dir_id} port {port_id}")
             try:
                 metrics = func_map[port_cat]['stats'](
                                director_id=dir_id,
@@ -257,16 +292,18 @@ def gather_dir_perf(configpath, arrayid, category):
 
             process_perf_results(metrics, port_cat)
 
-    logger.debug("Completed Director Performance Gathering")
+    logger.info("Completed Director Performance Gathering")
 
 
 def gather_perf(configpath, arrayid, category):
+    """ Generalized non-Director performance gathering """
     logger = logging.getLogger('discovery')
     logger.info(f"Starting {category} Stats Collection ")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
 
+    # Map our categories to functions and what arguments map to responses
     func_map = {'PortGroup':
                 {'keys': conn.performance.get_port_group_keys,
                  'stats': conn.performance.get_port_group_stats,
@@ -337,12 +374,14 @@ def gather_perf(configpath, arrayid, category):
         if 'Array' not in category:
             items = func_map[category]['keys'](array_id=arrayid)
         else:
+            # Special case, array object can't have array_id passed
             items = func_map[category]['keys']()
         logger.debug(items)
     except PyU4V.utils.exception.ResourceNotFoundException:
         logger.info(f"No {category} found")
         return
 
+    # this will be the kwargs passed to the stats function when called
     metric_params = {'recency': metric_recency,
                      'metrics': 'KPI'}
 
@@ -372,9 +411,9 @@ def gather_perf(configpath, arrayid, category):
 
 
 def do_array_discovery(configpath, arrayid):
-    """ Perform a discovery of all Arrays attached to U4V """
+    """ Perform a discovery of the array attached to U4V """
     logger = logging.getLogger('discovery')
-    logger.debug("Starting discovery for Array")
+    logger.info("Starting discovery for Array")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
@@ -388,14 +427,14 @@ def do_array_discovery(configpath, arrayid):
         result.append({'{#ARRAYID}': arrayid})
         logger.debug(result)
 
-    logger.debug("Completed discovery for Array")
+    logger.info("Completed discovery for Array")
     return result
 
 
 def do_director_discovery(configpath, arrayid, category):
     """ Perform a discovery of all the Directors in the array """
     logger = logging.getLogger('discovery')
-    logger.debug(f"Starting discovery for {category}")
+    logger.info(f"Starting discovery for {category}")
 
     PyU4V.univmax_conn.file_path = configpath
     conn = PyU4V.U4VConn()
@@ -425,8 +464,14 @@ def do_director_discovery(configpath, arrayid, category):
 
     for director in directors:
         dir_id = director['directorId']
+        logger.info(f"Discovering {category} {dir_id}")
+
+        # Build the Zabbix formatted key for the director for LLD
         dir_key = f"{{#{func_map[category]['id']}DIRID}}"
 
+        result.append({'{#ARRAYID}': arrayid, dir_key: dir_id})
+
+        # Now we find our director ports
         if 'ports' in func_map[category]:
             ports = list()
             try:
@@ -434,27 +479,24 @@ def do_director_discovery(configpath, arrayid, category):
                                                     director_id=dir_id)
                 logger.debug(ports)
             except PyU4V.utils.exception.ResourceNotFoundException:
-                logger.debug(f"No ports found for director {dir_id}")
+                logger.info(f"No ports found for director {dir_id}")
 
             port_key = f"{{#{func_map[category]['id']}PORTID}}"
             if ports:
                 for port in ports:
+                    port_id = f"{dir_id}-{port['portId']}"
                     result.append({'{#ARRAYID}': arrayid,
-                                   dir_key: dir_id,
-                                   port_key: port['portId']})
-        else:
-            result.append({'{#ARRAYID}': arrayid,
-                           dir_key: dir_id})
+                                   port_key: port_id})
 
     logger.debug(result)
-    logger.debug(f"Completed discovery for {category}")
+    logger.info(f"Completed discovery for {category}")
     return result
 
 
 def do_item_discovery(configpath, arrayid, category):
     """ Perform discoveyr of items on the array """
     logger = logging.getLogger('discovery')
-    logger.debug(f"Starting item discovery for {category}")
+    logger.info(f"Starting item discovery for {category}")
 
     if 'Array' in category:  # Special case for array
         return do_array_discovery(configpath, arrayid)
@@ -530,7 +572,7 @@ def do_item_discovery(configpath, arrayid, category):
         items = func_map[category]['keys'](array_id=arrayid)
         logger.debug(items)
     except PyU4V.utils.exception.ResourceNotFoundException:
-        logger.debug(f"No {category} items found")
+        logger.info(f"No {category} items found")
         return list()
 
     for item in items:
@@ -545,11 +587,8 @@ def do_item_discovery(configpath, arrayid, category):
 
 def main():
 
-    log_file = './zabbix_powermax.log'
     setup_logging(log_file)
-
     logger = logging.getLogger('discovery')
-
     logger.info("Started PowerMax Zabbix Integration")
 
     parser = argparse.ArgumentParser()
@@ -599,7 +638,7 @@ def main():
 
     args = parser.parse_args()
 
-    logger.debug("Arguments parsed: %s" % str(args))
+    logger.info("Arguments parsed: %s" % str(args))
 
     result = None
     if args.discovery:
@@ -671,12 +710,13 @@ def main():
             result = do_item_discovery(args.configpath, args.array,
                                        category="Array")
 
+        # Dump our results to STDOUT
         print(zabbix_safe_output(result))
 
     else:
         if args.array:
-
             logger.info("Executing Stat collection")
+
             result = gather_array_health(args.configpath, args.array)
 
             # Get data for ALL director types
@@ -686,11 +726,14 @@ def main():
                                          args.array,
                                          category=dir_cat)
 
-            for perf_cat in ['SRP', 'PortGroup', 'StorageGroup', 'Array',
-                             'Board', 'DiskGroup', 'BeEmulation',
-                             'FeEmulation', 'EDSEmulation', 'IMEmulation',
-                             'RDFEmulation', 'Host', 'Initiator', 'RDFS',
-                             'RDFA', 'ISCSITarget']:
+            # Get data for ALL other objects
+            data_items = ['SRP', 'PortGroup', 'StorageGroup', 'Array',
+                          'Board', 'DiskGroup', 'BeEmulation',
+                          'FeEmulation', 'EDSEmulation', 'IMEmulation',
+                          'RDFEmulation', 'Host', 'Initiator', 'RDFS',
+                          'RDFA', 'ISCSITarget']
+
+            for perf_cat in data_items:
                 result = gather_perf(args.configpath, args.array,
                                      category=perf_cat)
 
