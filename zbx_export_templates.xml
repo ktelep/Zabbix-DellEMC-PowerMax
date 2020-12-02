@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.2</version>
-    <date>2020-12-01T21:38:31Z</date>
+    <date>2020-12-02T21:17:53Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -34,6 +34,9 @@
                 </application>
                 <application>
                     <name>Backend Ports</name>
+                </application>
+                <application>
+                    <name>Board Metrics</name>
                 </application>
                 <application>
                     <name>Disk Groups</name>
@@ -92,15 +95,9 @@
             </applications>
             <discovery_rules>
                 <discovery_rule>
-                    <name>Board Discovery</name>
+                    <name>Director Discovery - Backend</name>
                     <type>EXTERNAL</type>
-                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--board&quot;]</key>
-                    <delay>30m</delay>
-                </discovery_rule>
-                <discovery_rule>
-                    <name>Director Discovery</name>
-                    <type>EXTERNAL</type>
-                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--director&quot;]</key>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--BEDirector&quot;]</key>
                     <delay>30m</delay>
                     <item_prototypes>
                         <item_prototype>
@@ -252,10 +249,18 @@
                                 </application>
                             </applications>
                         </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Director Discovery - Backend Ports</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--BEPort&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Average IO Size</name>
+                            <name>Port {#BEPORTID} Average IO Size</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.AvgIOSize[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.AvgIOSize[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>B</units>
@@ -274,9 +279,9 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} IOs</name>
+                            <name>Port {#BEPORTID} IOs</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.IOs[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.IOs[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>IOPs</units>
@@ -287,9 +292,9 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Read Throughput</name>
+                            <name>Port {#BEPORTID} Read Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.MBRead[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.MBRead[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>Bps</units>
@@ -308,9 +313,9 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Throughput</name>
+                            <name>Port {#BEPORTID} Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.MBs[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.MBs[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>Bps</units>
@@ -329,9 +334,9 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Write Throughput</name>
+                            <name>Port {#BEPORTID} Write Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.MBWritten[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.MBWritten[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>Bps</units>
@@ -350,9 +355,9 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Percent Busy</name>
+                            <name>Port {#BEPORTID} Percent Busy</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.PercentBusy[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.PercentBusy[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
@@ -363,9 +368,9 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Read IOs</name>
+                            <name>Port {#BEPORTID} Read IOs</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.Reads[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.Reads[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>IOPs</units>
@@ -376,9 +381,9 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#BEDIRID}.{#BEPORTID} Write IOs</name>
+                            <name>Port {#BEPORTID} Write IOs</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.beport.Writes[{#BEDIRID}-{#BEPORTID}]</key>
+                            <key>dellemc.pmax.perf.beport.Writes[{#BEPORTID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>IOPs</units>
@@ -388,28 +393,24 @@
                                 </application>
                             </applications>
                         </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Board Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--board&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
                         <item_prototype>
-                            <name>{#DIRID} Host IOs</name>
+                            <name>Board {#BOARDID} Inbound Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.fedirector.HostIOs[{#DIRID}]</key>
+                            <key>dellemc.pmax.perf.board.InboundMBs[{#BOARDID}]</key>
                             <delay>0</delay>
-                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <description>Inbound Speed</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Directors</name>
-                                </application>
-                            </applications>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>{#DIRID} Host Throughput</name>
-                            <type>TRAP</type>
-                            <key>dellemc.pmax.perf.fedirector.HostMBs[{#DIRID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <units>Bps</units>
-                            <applications>
-                                <application>
-                                    <name>Frontend Directors</name>
+                                    <name>Board Metrics</name>
                                 </application>
                             </applications>
                             <preprocessing>
@@ -422,88 +423,160 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>{#DIRID} Percent Busy</name>
+                            <name>Board {#BOARDID} Maximum Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.fedirector.PercentBusy[{#DIRID}]</key>
+                            <key>dellemc.pmax.perf.board.MaxSpeedMBs[{#BOARDID}]</key>
                             <delay>0</delay>
+                            <units>B</units>
+                            <description>Maximum Speed</description>
+                            <applications>
+                                <application>
+                                    <name>Board Metrics</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Board {#BOARDID} Outbound Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.board.OutboundMBs[{#BOARDID}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <description>Outbound Speed</description>
+                            <applications>
+                                <application>
+                                    <name>Board Metrics</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Board {#BOARDID} Utilization</name>
+                            <type>CALCULATED</type>
+                            <key>dellemc.pmax.perf.board.Utilization[{#BOARDID}]</key>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <params>((last(dellemc.pmax.perf.board.OutboundMBs[{#BOARDID}]) + last(dellemc.pmax.perf.board.InboundMBs[{#BOARDID}])) / last(dellemc.pmax.perf.board.MaxSpeedMBs[{#BOARDID}]))</params>
                             <applications>
                                 <application>
-                                    <name>Frontend Directors</name>
+                                    <name>Board Metrics</name>
                                 </application>
                             </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
                         </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Disk Group Discovery</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--diskgroup&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
                         <item_prototype>
-                            <name>{#DIRID} Read Response Time</name>
+                            <name>Disk Group {#DISKGID} Disk Reads</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.fedirector.ReadResponseTime[{#DIRID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.DiskReads[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>ms</units>
+                            <description>The number of host reads per second for the disk.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Directors</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>{#DIRID} Write Response Time</name>
+                            <name>Disk Group {#DISKGID} Disk Writes</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.fedirector.WriteResponseTime[{#DIRID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.DiskWrites[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>ms</units>
+                            <description>The number of host writes per second for the disk.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Directors</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Average IO Size</name>
+                            <name>Disk Group {#DISKGID} IO Density</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.AvgIOSize[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.IODensity[{#DISKGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>The number of BE requests per GB of disk</description>
+                            <applications>
+                                <application>
+                                    <name>Disk Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Group {#DISKGID} IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.diskgroup.IOs[{#DISKGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>The number of IO commands to the disk.</description>
+                            <applications>
+                                <application>
+                                    <name>Disk Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Group {#DISKGID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.diskgroup.MBReads[{#DISKGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <description>The average throughput of host MBs read (per second) by the director.</description>
+                            <applications>
+                                <application>
+                                    <name>Disk Groups</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Group {#DISKGID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.diskgroup.MBs[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>B</units>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <parameters>
-                                        <parameter>1024</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} IOs</name>
-                            <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.IOs[{#DIRID}-{#PORTID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <units>IOPs</units>
-                            <applications>
-                                <application>
-                                    <name>Frontend Ports</name>
-                                </application>
-                            </applications>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Read Throughput</name>
-                            <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.MBRead[{#DIRID}-{#PORTID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <units>Bps</units>
-                            <applications>
-                                <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                             <preprocessing>
@@ -516,15 +589,16 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Throughput</name>
+                            <name>Disk Group {#DISKGID} Write Throughput</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.MBs[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.MBWritten[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>Bps</units>
+                            <units>B</units>
+                            <description>The average throughput of host MBs written (per second) by the director.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                             <preprocessing>
@@ -537,88 +611,82 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Write Throughput</name>
+                            <name>Disk Group {#DISKGID} Percent Busy</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.MBWritten[{#DIRID}-{#PORTID}]</key>
-                            <delay>0</delay>
-                            <value_type>FLOAT</value_type>
-                            <units>Bps</units>
-                            <applications>
-                                <application>
-                                    <name>Frontend Ports</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <parameters>
-                                        <parameter>1048576</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Percent Busy</name>
-                            <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.PercentBusy[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.PercentBusy[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>The percent of time that the disk is busy serving IOs.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Read Response Time</name>
+                            <name>Disk Group {#DISKGID} Percent Capacity Free</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.ReadResponseTime[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.PercentCapacityFree[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>ms</units>
+                            <units>%</units>
+                            <description>The percent of the disk that is free.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Read IOs</name>
+                            <name>Disk Group {#DISKGID} Percent Capacity Used</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.Reads[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.PercentCapacityUsed[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>IOPs</units>
+                            <units>%</units>
+                            <description>The percent of the disk group capacity that is allocated.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Response Time</name>
+                            <name>Disk Group {#DISKGID} Read Response Time</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.ResponseTime[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.ReadResponseTime[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>ms</units>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Port Speed</name>
+                            <name>Disk Group {#DISKGID} Response Time</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.SpeedGBs[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.ResponseTime[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>Bps</units>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Group {#DISKGID} Total Capacity</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.diskgroup.TotalCapacity[{#DISKGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <description>The total capacity of the disk (GBs).</description>
+                            <applications>
+                                <application>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                             <preprocessing>
@@ -631,37 +699,121 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Write Response Time</name>
+                            <name>Disk Group {#DISKGID} Used Capacity</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.WriteResponseTime[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.UsedCapacity[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>ms</units>
+                            <units>B</units>
+                            <description>The total used capacity of the disk (GBs).</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1073741824</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
                         </item_prototype>
                         <item_prototype>
-                            <name>Port {#DIRID}.{#PORTID} Write IOs</name>
+                            <name>Disk Group {#DISKGID} Write Response Time</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.feport.Writes[{#DIRID}-{#PORTID}]</key>
+                            <key>dellemc.pmax.perf.diskgroup.WriteResponseTime[{#DISKGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
-                            <units>IOPs</units>
+                            <description>The average time it took the disk to serve one write command.</description>
                             <applications>
                                 <application>
-                                    <name>Frontend Ports</name>
+                                    <name>Disk Groups</name>
                                 </application>
                             </applications>
                         </item_prototype>
                     </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>Disk Group {#DISKGID} IOPs</name>
+                            <type>STACKED</type>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.DiskReads[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.DiskWrites[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Disk Group {#DISKGID} Response Time</name>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.ReadResponseTime[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>277484</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.ResponseTime[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.WriteResponseTime[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Disk Group {#DISKGID} Throughput</name>
+                            <type>STACKED</type>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.MBReads[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.diskgroup.MBWritten[{#DISKGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>Disk Group Discovery</name>
+                    <name>Director Discovery - EDS</name>
                     <type>EXTERNAL</type>
-                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--diskgroup&quot;]</key>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--EDSDirector&quot;]</key>
                     <delay>30m</delay>
                 </discovery_rule>
                 <discovery_rule>
@@ -751,7 +903,7 @@
                         <item_prototype>
                             <name>IM Emulation {#IMEMUID} Percent Busy</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.imemuulation.PercentBusy[{#IMEMUID}]</key>
+                            <key>dellemc.pmax.perf.imemulation.PercentBusy[{#IMEMUID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
@@ -764,7 +916,7 @@
                         <item_prototype>
                             <name>IM Emulation {#IMEMUID} Total Work Time</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.imemuulation.TotalWorkTime[{#IMEMUID}]</key>
+                            <key>dellemc.pmax.perf.imemulation.TotalWorkTime[{#IMEMUID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
@@ -797,6 +949,290 @@
                             <applications>
                                 <application>
                                     <name>RDF Emulation</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Director Discovery - Frontend</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--FEDirector&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DIRID} Host IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.HostIOs[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Host Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.HostMBs[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.PercentBusy[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Read Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.ReadResponseTime[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.WriteResponseTime[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Director Discovery - Frontend Ports</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--FEPort&quot;]</key>
+                    <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Port {#PORTID} Average IO Size</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.AvgIOSize[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1024</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.IOs[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.MBRead[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.MBs[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.MBWritten[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.PercentBusy[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Read Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.ReadResponseTime[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Read IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.Reads[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.ResponseTime[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Port Speed</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.SpeedGBs[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>Bps</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1073741824</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.WriteResponseTime[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Port {#PORTID} Write IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.feport.Writes[{#PORTID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Ports</name>
                                 </application>
                             </applications>
                         </item_prototype>
@@ -959,6 +1395,12 @@
                             </applications>
                         </item_prototype>
                     </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Director Discovery - IM</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--IMDirector&quot;]</key>
+                    <delay>30m</delay>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Initiator Discovery</name>
@@ -1266,6 +1708,12 @@
                     </item_prototypes>
                 </discovery_rule>
                 <discovery_rule>
+                    <name>Director Discovery - RDF</name>
+                    <type>EXTERNAL</type>
+                    <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--RDFDirector&quot;]</key>
+                    <delay>30m</delay>
+                </discovery_rule>
+                <discovery_rule>
                     <name>SRP Discovery</name>
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--srp&quot;]</key>
@@ -1389,6 +1837,7 @@
                             <key>dellemc.pmax.perf.storagegroup.BEReadReqs[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of read requests each second performed by the disk directors to cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1401,6 +1850,7 @@
                             <key>dellemc.pmax.perf.storagegroup.BEReqs[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of read/write requests each second performed by the disk directors to cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1413,6 +1863,7 @@
                             <key>dellemc.pmax.perf.storagegroup.BEWriteReqs[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of write requests each second performed by the disk directors to cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1425,6 +1876,7 @@
                             <key>dellemc.pmax.perf.storagegroup.HostHits[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of host read/write operations performed each second by the group that were immediately satisfied from cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1438,6 +1890,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>Host I/O Limit percentage time exceeded.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1450,6 +1903,7 @@
                             <key>dellemc.pmax.perf.storagegroup.HostIOs[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of host operations performed each second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1463,6 +1917,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>B</units>
+                            <description>The cumulative number of host MBs read per second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1484,6 +1939,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>B</units>
+                            <description>The cumulative number of host MBs read/writes per second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1505,6 +1961,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>B</units>
+                            <description>The cumulative number of host MBs written per second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1525,6 +1982,7 @@
                             <key>dellemc.pmax.perf.storagegroup.HostMisses[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of host read/write operations performed each second by the group that could not be satisfied from cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1537,6 +1995,7 @@
                             <key>dellemc.pmax.perf.storagegroup.HostReads[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of host read operations performed each second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1549,6 +2008,7 @@
                             <key>dellemc.pmax.perf.storagegroup.HostWrites[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of host write operations performed each second by the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1562,6 +2022,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>The percent of read operations, performed by the group, that were immediately satisfied by cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1575,6 +2036,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>The percent of read miss operations performed each second by the group. A miss occurs when the requested read data is not found in cache.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1588,6 +2050,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>The percent of IO operations that were reads.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1601,6 +2064,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
+                            <description>The percent of IO operations that were writes.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1614,6 +2078,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <description>The RDF round trip time. The metric is calculated as follows : RDF Accumulated Service Time / (RDF Reads/sec + RDF Writes/sec) rolled up from the RDF devices in the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1627,6 +2092,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <description>A summary of the read, write, and average response times for the selected SRDF/S group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1640,6 +2106,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <description>The calculated average read response time.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1653,6 +2120,7 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <description>The calculated average response time.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1665,6 +2133,7 @@
                             <key>dellemc.pmax.perf.storagegroup.VAAITotalCommandCount[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>Number of VAAI commands issued.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1677,6 +2146,7 @@
                             <key>dellemc.pmax.perf.storagegroup.WPCount[{#SGID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
+                            <description>The number of tracks currently in write pending mode for the group.</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -1690,6 +2160,21 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <description>Write paced delay.</description>
+                            <applications>
+                                <application>
+                                    <name>Storage Groups</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#SGID} Write Response Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.storagegroup.WriteResponseTime[{#SGID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <description>The calculated average write response time</description>
                             <applications>
                                 <application>
                                     <name>Storage Groups</name>
@@ -2099,7 +2584,57 @@
                     </item_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
-                            <name>Usable Capacity {#ARRAYID}</name>
+                            <name>Array IOs</name>
+                            <percent_left>95</percent_left>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.HostIOs[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Array Response Time</name>
+                            <percent_left>95</percent_left>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.ReadResponseTime[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.WriteResponseTime[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Array Throughput</name>
+                            <percent_left>95</percent_left>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.HostMBs[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Array Usable Capacity</name>
                             <graph_items>
                                 <graph_item>
                                     <sortorder>1</sortorder>

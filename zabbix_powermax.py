@@ -431,7 +431,7 @@ def do_array_discovery(configpath, arrayid):
     return result
 
 
-def do_director_discovery(configpath, arrayid, category):
+def do_director_discovery(configpath, arrayid, category, ports=False):
     """ Perform a discovery of all the Directors in the array """
     logger = logging.getLogger('discovery')
     logger.info(f"Starting discovery for {category}")
@@ -469,27 +469,29 @@ def do_director_discovery(configpath, arrayid, category):
         # Build the Zabbix formatted key for the director for LLD
         dir_key = f"{{#{func_map[category]['id']}DIRID}}"
 
-        result.append({'{#ARRAYID}': arrayid, dir_key: dir_id})
+        if not ports:
+            result.append({'{#ARRAYID}': arrayid, dir_key: dir_id})
+        else:
+            # Now we find our director ports
+            if 'ports' in func_map[category]:
+                ports = list()
+                try:
+                    ports = func_map[category]['ports'](array_id=arrayid,
+                                                        director_id=dir_id)
+                    logger.debug(ports)
+                except PyU4V.utils.exception.ResourceNotFoundException:
+                    logger.info(f"No ports found for director {dir_id}")
 
-        # Now we find our director ports
-        if 'ports' in func_map[category]:
-            ports = list()
-            try:
-                ports = func_map[category]['ports'](array_id=arrayid,
-                                                    director_id=dir_id)
-                logger.debug(ports)
-            except PyU4V.utils.exception.ResourceNotFoundException:
-                logger.info(f"No ports found for director {dir_id}")
-
-            port_key = f"{{#{func_map[category]['id']}PORTID}}"
-            if ports:
-                for port in ports:
-                    port_id = f"{dir_id}-{port['portId']}"
-                    result.append({'{#ARRAYID}': arrayid,
-                                   port_key: port_id})
+                port_key = f"{{#{func_map[category]['id']}PORTID}}"
+                if ports:
+                    for port in ports:
+                        port_id = f"{dir_id}-{port['portId']}"
+                        result.append({'{#ARRAYID}': arrayid,
+                                       port_key: port_id})
 
     logger.debug(result)
     logger.info(f"Completed discovery for {category}")
+
     return result
 
 
@@ -603,37 +605,60 @@ def main():
     parser.add_argument('--array', '-a', action='store', required=True,
                         help="Perform array stat or array discovery")
 
-    parser.add_argument('--director', action='store_true',
-                        help="Perform director discovery")
+    dgroup = parser.add_mutually_exclusive_group()
 
-    parser.add_argument('--srp', action='store_true',
+    dgroup.add_argument('--FEPort', action='store_true',
+                        help="Perform Frontend Port discovery")
+
+    dgroup.add_argument('--BEPort', action='store_true',
+                        help="Perform Backend Port discovery")
+
+    dgroup.add_argument('--RDFPort', action='store_true',
+                        help="Perform RDF Port discovery")
+    
+    dgroup.add_argument('--FEDirector', action='store_true',
+                        help="Perform Frontend Director discovery")
+
+    dgroup.add_argument('--BEDirector', action='store_true',
+                        help="Perform Backend Director discovery")
+
+    dgroup.add_argument('--RDFDirector', action='store_true',
+                        help="Perform RDF Director discovery")
+
+    dgroup.add_argument('--EDSDirector', action='store_true',
+                        help="Perform EDS Director discovery")
+
+    dgroup.add_argument('--IMDirector', action='store_true',
+                        help="Perform IM Director discovery")
+                        
+    dgroup.add_argument('--srp', action='store_true',
                         help="Perform SRP discovery")
 
-    parser.add_argument('--board', action='store_true',
+    dgroup.add_argument('--board', action='store_true',
                         help="Perform Board discovery")
 
-    parser.add_argument('--diskgroup', action='store_true',
+    dgroup.add_argument('--diskgroup', action='store_true',
                         help="Perform Disk Group discovery")
 
-    parser.add_argument('--storagegroup', action='store_true',
+    dgroup.add_argument('--storagegroup', action='store_true',
                         help="Perform Storage Group discovery")
 
-    parser.add_argument('--portgroup', action='store_true',
+    dgroup.add_argument('--portgroup', action='store_true',
                         help="Perform Port Group discovery")
 
-    parser.add_argument('--host', action='store_true',
+    dgroup.add_argument('--host', action='store_true',
                         help="Perform Host discovery")
 
-    parser.add_argument('--initiator', action='store_true',
+    dgroup.add_argument('--initiator', action='store_true',
                         help="Perform Initiator discovery")
 
-    parser.add_argument('--emulation', action='store_true',
+    dgroup.add_argument('--emulation', action='store_true',
                         help="Perform Emulation discovery")
 
-    parser.add_argument('--iscsi', action='store_true',
+    dgroup.add_argument('--iscsi', action='store_true',
                         help="Perform iSCSI Target discovery")
 
-    parser.add_argument('--rdf', action='store_true',
+    dgroup.add_argument('--rdf', action='store_true',
                         help="Perform RDF discovery")
 
     args = parser.parse_args()
@@ -642,15 +667,55 @@ def main():
 
     result = None
     if args.discovery:
-        if args.director:
-            logger.info("Executing Director Discovery")
-            result = list()
-            for dir_cat in ['BEDirector', 'FEDirector', 'RDFDirector',
-                            'EDSDirector', 'IMDirector']:
-                result += do_director_discovery(args.configpath,
-                                                args.array,
-                                                category=dir_cat)
-
+        result = list()
+        if args.FEDirector:
+            logger.info("Executing FEDirector Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="FEDirector",
+                                           ports=None)
+        elif args.FEPort:
+            logger.info("Executing FEPort Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="FEDirector",
+                                           ports=True)
+        elif args.BEDirector:
+            logger.info("Executing BEDirector Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="BEDirector",
+                                           ports=None)
+        elif args.BEPort:
+            logger.info("Executing BEPort Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="BEDirector",
+                                           ports=True)
+        elif args.RDFDirector:
+            logger.info("Executing RDFDirector Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="RDFDirector",
+                                           ports=None)
+        elif args.RDFPort:
+            logger.info("Executing RDFPort Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="RDFDirector",
+                                           ports=True)
+        elif args.EDSDirector:
+            logger.info("Executing EDSDirector Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="EDSDirector",
+                                           ports=None)
+        elif args.IMDirector:
+            logger.info("Executing IMDirector Discovery")
+            result = do_director_discovery(args.configpath,
+                                           args.array,
+                                           category="IMDirector",
+                                           ports=None)
         elif args.iscsi:
             logger.info("Executing iSCSI Target Discovery")
             result = do_item_discovery(args.configpath, args.array,
