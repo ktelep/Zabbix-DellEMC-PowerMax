@@ -22,11 +22,11 @@ log_file = "/tmp/zabbix_powermax.log"
 
 # Host Base is the pattern used to define the Array in Zabbix
 # it is case-sensitive
-host_base = 'PowerMax {arrayid}'
+host_base = "PowerMax {arrayid}"
 
 # Base name for the keys created, you can customize if you don't like
 # the default
-key_base = 'dellemc.pmax.'
+key_base = "dellemc.pmax."
 
 # Metric recency is used to determine how "fresh" our stats must be
 #  5 is the default (5 minutes), use 0 for testing.  Note this does
@@ -615,7 +615,7 @@ def main():
 
     dgroup.add_argument('--RDFPort', action='store_true',
                         help="Perform RDF Port discovery")
-    
+
     dgroup.add_argument('--FEDirector', action='store_true',
                         help="Perform Frontend Director discovery")
 
@@ -630,7 +630,7 @@ def main():
 
     dgroup.add_argument('--IMDirector', action='store_true',
                         help="Perform IM Director discovery")
-                        
+
     dgroup.add_argument('--srp', action='store_true',
                         help="Perform SRP discovery")
 

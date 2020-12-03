@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.2</version>
-    <date>2020-12-02T21:17:53Z</date>
+    <date>2020-12-03T21:55:59Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -42,6 +42,9 @@
                     <name>Disk Groups</name>
                 </application>
                 <application>
+                    <name>EDS Directors</name>
+                </application>
+                <application>
                     <name>EDS Emulation</name>
                 </application>
                 <application>
@@ -55,6 +58,9 @@
                 </application>
                 <application>
                     <name>Hosts</name>
+                </application>
+                <application>
+                    <name>IM Directors</name>
                 </application>
                 <application>
                     <name>IM Emulation</name>
@@ -406,6 +412,7 @@
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.board.InboundMBs[{#BOARDID}]</key>
                             <delay>0</delay>
+                            <value_type>FLOAT</value_type>
                             <units>B</units>
                             <description>Inbound Speed</description>
                             <applications>
@@ -423,10 +430,24 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
+                            <name>Board {#BOARDID} Interconnect</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.board.InterConnect[{#BOARDID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Outbound Speed</description>
+                            <applications>
+                                <application>
+                                    <name>Board Metrics</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
                             <name>Board {#BOARDID} Maximum Throughput</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.board.MaxSpeedMBs[{#BOARDID}]</key>
                             <delay>0</delay>
+                            <value_type>FLOAT</value_type>
                             <units>B</units>
                             <description>Maximum Speed</description>
                             <applications>
@@ -448,29 +469,9 @@
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.board.OutboundMBs[{#BOARDID}]</key>
                             <delay>0</delay>
+                            <value_type>FLOAT</value_type>
                             <units>B</units>
                             <description>Outbound Speed</description>
-                            <applications>
-                                <application>
-                                    <name>Board Metrics</name>
-                                </application>
-                            </applications>
-                            <preprocessing>
-                                <step>
-                                    <type>MULTIPLIER</type>
-                                    <parameters>
-                                        <parameter>1048576</parameter>
-                                    </parameters>
-                                </step>
-                            </preprocessing>
-                        </item_prototype>
-                        <item_prototype>
-                            <name>Board {#BOARDID} Utilization</name>
-                            <type>CALCULATED</type>
-                            <key>dellemc.pmax.perf.board.Utilization[{#BOARDID}]</key>
-                            <value_type>FLOAT</value_type>
-                            <units>%</units>
-                            <params>((last(dellemc.pmax.perf.board.OutboundMBs[{#BOARDID}]) + last(dellemc.pmax.perf.board.InboundMBs[{#BOARDID}])) / last(dellemc.pmax.perf.board.MaxSpeedMBs[{#BOARDID}]))</params>
                             <applications>
                                 <application>
                                     <name>Board Metrics</name>
@@ -815,6 +816,21 @@
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--EDSDirector&quot;]</key>
                     <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>EDS {#EDSDIRID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.edsdirector.PercentBusy[{#EDSDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>EDS Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Emulation Discovery</name>
@@ -929,7 +945,7 @@
                         <item_prototype>
                             <name>RDF Emulation {#RDFEMUID} Percent Busy</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.rdfemuulation.PercentBusy[{#RDFEMUID}]</key>
+                            <key>dellemc.pmax.perf.rdfemulation.PercentBusy[{#RDFEMUID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
@@ -942,7 +958,7 @@
                         <item_prototype>
                             <name>RDF Emulation {#RDFEMUID} Total Work Time</name>
                             <type>TRAP</type>
-                            <key>dellemc.pmax.perf.rdfemuulation.TotalWorkTime[{#RDFEMUID}]</key>
+                            <key>dellemc.pmax.perf.rdfemulation.TotalWorkTime[{#RDFEMUID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
@@ -960,6 +976,39 @@
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--FEDirector&quot;]</key>
                     <delay>30m</delay>
                     <item_prototypes>
+                        <item_prototype>
+                            <name>{#DIRID} Host IO Limit IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.HostIOLimitIOs[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <description>The number of IOs the FE director is processing.</description>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Host IO Limit Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.HostIOLimitMBs[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <description>The number of MBs the FE director is processing.</description>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
                         <item_prototype>
                             <name>{#DIRID} Host IOs</name>
                             <type>TRAP</type>
@@ -994,9 +1043,48 @@
                             </preprocessing>
                         </item_prototype>
                         <item_prototype>
+                            <name>{#DIRID} Core 0 Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.PercentBusyLogicalCore_0[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Core 1 Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.PercentBusyLogicalCore_1[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
                             <name>{#DIRID} Percent Busy</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.fedirector.PercentBusy[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Queue Depth Utilization</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.QueueDepthUtilization[{#DIRID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
@@ -1013,6 +1101,18 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Frontend Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DIRID} Syscall Count</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.fedirector.SyscallCount[{#DIRID}]</key>
+                            <delay>0</delay>
+                            <description>The total number of calls seen by this director.</description>
                             <applications>
                                 <application>
                                     <name>Frontend Directors</name>
@@ -1401,6 +1501,21 @@
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--IMDirector&quot;]</key>
                     <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>IM {#IMDIRID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.imdirector.PercentBusy[{#IMDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>IM Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Initiator Discovery</name>
@@ -1712,6 +1827,154 @@
                     <type>EXTERNAL</type>
                     <key>zabbix_powermax.py[&quot;--discovery&quot;,&quot;--array&quot;,&quot;{$ARRAYID}&quot;,&quot;--configpath&quot;,&quot;{$U4VPATH}&quot;,&quot;--RDFDirector&quot;]</key>
                     <delay>30m</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Average IO Service Time</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.AvgIOServiceTime[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Copy IO</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.CopyIOs[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Copy Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.CopyMBs[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} IOs</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.IOs[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Read Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.MBRead[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Data Sent and Recieved</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.MBSentAndReceived[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Write Throughput</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.MBWritten[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1048576</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Percent Busy</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.PercentBusy[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#RDFDIRID} Write Requests</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.rdfdirector.WriteReqs[{#RDFDIRID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RDF Directors</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
                 </discovery_rule>
                 <discovery_rule>
                     <name>SRP Discovery</name>
@@ -2190,7 +2453,7 @@
                     <delay>30m</delay>
                     <item_prototypes>
                         <item_prototype>
-                            <name>Capacity Health Score {#ARRAYID}</name>
+                            <name>Capacity Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.CAPACITY[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2202,7 +2465,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Configuration Health Score {#ARRAYID}</name>
+                            <name>Configuration Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.CONFIGURATION[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2214,7 +2477,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Overall Health Score {#ARRAYID}</name>
+                            <name>Overall Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.OVERALL[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2226,7 +2489,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Service Level Compliance Health Score {#ARRAYID}</name>
+                            <name>Service Level Compliance Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.SERVICE_LEVEL_COMPLIANCE[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2238,7 +2501,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>Storage Group Response Time Health Score {#ARRAYID}</name>
+                            <name>Storage Group Response Time Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.STORAGE_GROUP_RESPONSE_TIME[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2250,7 +2513,7 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
-                            <name>System Utilization Health Score {#ARRAYID}</name>
+                            <name>System Utilization Health Score</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.health.SYSTEM_UTILIZATION[{#ARRAYID}]</key>
                             <delay>0</delay>
@@ -2260,6 +2523,27 @@
                                     <name>Array Health</name>
                                 </application>
                             </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Allocated Capacity in TB</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.AllocatedCapacityTB[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>TB</units>
+                            <applications>
+                                <application>
+                                    <name>Array Capacity</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <parameters>
+                                        <parameter>1099511627776</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
                         </item_prototype>
                         <item_prototype>
                             <name>Allocated Capacity</name>
@@ -2289,6 +2573,126 @@
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>IOPs</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Backend Utilization</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.BEUtilization[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>Percentage of time the BE is busy</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Cache Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.Cache_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for Cache. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DA Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.DA_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for DA. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Utilization</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.DiskUtilization[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>Percentage of time the Disk is busy</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DX Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.DX_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for DA. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>EFD Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.EFD_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for EFD. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>FC Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.FC_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for FC. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Frontend Utilization</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.FEUtilization[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>Percentage of time the BE is busy</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>FE Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.FE_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for FE. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
                             <applications>
                                 <application>
                                     <name>Array Performance</name>
@@ -2368,6 +2772,58 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
+                            <name>Percent of Metadata Used for Backend</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.PercentMetaBEUsed[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Percent of Metadata Used for Frontend</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.PercentMetaFEUsed[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Percent of Metadata Used for Replication</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.PercentMetaRepUsed[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Percent of Metadata Used for System</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.PercentMetaSystemUsed[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
                             <name>Percent Reads</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.array.PercentReads[{#ARRAYID}]</key>
@@ -2394,12 +2850,65 @@
                             </applications>
                         </item_prototype>
                         <item_prototype>
+                            <name>RDF Utilization</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.RDFUtilization[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>Percentage of time the Disk is busy</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>RDF Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.RDF_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for DA. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
                             <name>Read Response Time</name>
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.array.ReadResponseTime[{#ARRAYID}]</key>
                             <delay>0</delay>
                             <value_type>FLOAT</value_type>
                             <units>ms</units>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SATA Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.SATA_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for SATA. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
+                            <applications>
+                                <application>
+                                    <name>Array Performance</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SCM Balance</name>
+                            <type>TRAP</type>
+                            <key>dellemc.pmax.perf.array.SCM_Balance[{#ARRAYID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <description>Balance information for SCM. Balance metrics measure hardware components balance. It is calculated as the difference between the maximum and minimum values for &quot;% Busy&quot; for the component instances. In a balanced system the balance metrics should be relatively low.</description>
                             <applications>
                                 <application>
                                     <name>Array Performance</name>
@@ -2583,6 +3092,62 @@
                         </item_prototype>
                     </item_prototypes>
                     <graph_prototypes>
+                        <graph_prototype>
+                            <name>Array Health {$ARRAYID}</name>
+                            <yaxismax>110</yaxismax>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>FIXED</ymax_type_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.CAPACITY[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.CONFIGURATION[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.OVERALL[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <color>A54F10</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.SERVICE_LEVEL_COMPLIANCE[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>5</sortorder>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.STORAGE_GROUP_RESPONSE_TIME[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>6</sortorder>
+                                    <color>6C59DC</color>
+                                    <item>
+                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <key>dellemc.pmax.health.SYSTEM_UTILIZATION[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
                         <graph_prototype>
                             <name>Array IOs</name>
                             <percent_left>95</percent_left>
