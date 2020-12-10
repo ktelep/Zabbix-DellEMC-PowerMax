@@ -18,9 +18,9 @@ The integration consists of two components, a Template that is imported into Zab
 3.  Python 3.6
 4.  Python Modules
   1. PyU4V – Python Module for interaction with Unisphere for PowerMax
-    * https://pypi.org/project/PyU4V/
+     * https://pypi.org/project/PyU4V/
   2. Py-zabbix – Python Module for interaction with Zabbix (pure python implementation for cross compatibility)
-    * https://pypi.org/project/py-zabbix/
+     * https://pypi.org/project/py-zabbix/
 
 Please be sure that the correct Py-zabbix module is installed, there are two with very similar names.
 
@@ -31,7 +31,7 @@ Discovery Configuration
 2.  Update the zabbix_powermax.py script with the IP address and Port for the zabbix trapper on your server or agent.
 3.  Update the zabbix_powermax.py script log file location if you prefer a location besides the default, be sure this location is writable by the zabbix user.
 2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation.   Store this file in a location accessible to the zabbix user.
-5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>
+5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  ```sh zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>```
 6.  Import the attached template into your zabbix installation
 7.  Create a new Host in Zabbix named: "PowerMax <array serial>"  CASE IS IMPORTANT
 8.  Create two Host Level Macros
