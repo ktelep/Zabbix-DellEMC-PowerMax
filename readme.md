@@ -63,7 +63,7 @@ You should see the collections run in the log and data should appear in Zabbix.
 
 * Stats Collection Issues 
   * Statistics are only collected if they are less than 5 minutes old (this is known as recency) you can tweak this setting in the script, but it will not increase the granularity of the statistics, just whether the script will collect and send them.  You may have to run the script multiple times in testing before data shows up in Zabbix.   The logs will tell you if the recency hasn't been met.  It is recommended to NOT change this setting unless you are testing something specific.
-  * Validate that Diagnostic statistics are enabled on the PowerMax.  It is enabled by default but may have been disabled
+  * Validate that Diagnostic statistics are enabled on the PowerMax.  It is enabled by default but may have been disabled.
 
 ## Implemented Objects  
 **Currently Supported Objects**
