@@ -36,8 +36,8 @@ zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <a
 6.  Import the attached template into your zabbix installation
 7.  Create a new Host in Zabbix named: "PowerMax <array serial>"  **CASE IS IMPORTANT**
 8.  Create two Host Level Macros
-  *  {$ARRAYID} - Serial of Array
-  *  {$U4VPATH} - Path to PyU4V.conf file
+   *  {$ARRAYID} - Serial of Array
+   *  {$U4VPATH} - Path to PyU4V.conf file
 9.  Link the DellEMC PowerMax Template to the newly created Host
 10.  Be Patient, it will take about 30-40 minutes for discovery to be completed, you can monitor the log file as the discovery takes place.   
 
@@ -59,7 +59,7 @@ You should see the collections run in the log and data should appear in Zabbix.
 
 * Discovery Issues
   * If nothing is discovered, make sure the path to python is correct at the top of the script and the modules are accessible by the zabbix user.   The environment created by Zabbix when running external LLD scripts is quite minimal.
-  * Validate that the script runs as the Zabbix user successfully, if it does not validate the PyU4V.conf file is working and credentials are correct
+  * Validate that the script runs as the Zabbix user successfully, if it does not validate the PyU4V.conf file is correctly setup and the credentials are also valid.   Look for tracebacks in the log file.
 
 * Stats Collection Issues 
   * Statistics are only collected if they are less than 5 minutes old (this is known as recency) you can tweak this setting in the script, but it will not increase the granularity of the statistics, just whether the script will collect and send them.  You may have to run the script multiple times in testing before data shows up in Zabbix.   The logs will tell you if the recency hasn't been met.  It is recommended to NOT change this setting unless you are testing something specific.
@@ -74,11 +74,10 @@ You should see the collections run in the log and data should appear in Zabbix.
 -	Attached Host and Initiator Statistics
 -	Storage Group performance statistics
 -	Port Group performance Statistics
-
 -	RDF Director and Port level performance statistics
 -	RDF performance statistics 
 
-**KPIs yet to be implemented** (Please reach out if you are leveraging these features)
+**KPIs yet to be implemented**
 -	FICON statistics
 -	vVOL Storage Container Statistics
 -	IP Interface Statistics

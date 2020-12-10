@@ -31,7 +31,7 @@ key_base = "dellemc.pmax."
 # Metric recency is used to determine how "fresh" our stats must be
 #  5 is the default (5 minutes), use 0 for testing.  Note this does
 # not change how often diagnostic data is collected ON the array
-metric_recency = 0
+metric_recency = 5
 
 
 def log_exception_handler(type, value, tb):

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.2</version>
-    <date>2020-12-03T21:55:59Z</date>
+    <date>2020-12-10T19:00:49Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -9,8 +9,8 @@
     </groups>
     <templates>
         <template>
-            <template>Template Storage DellEMC PowerMax</template>
-            <name>Template Storage DellEMC PowerMax</name>
+            <template>Storage - DellEMC PowerMax</template>
+            <name>Storage - DellEMC PowerMax</name>
             <groups>
                 <group>
                     <name>Templates</name>
@@ -744,7 +744,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.DiskReads[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -752,7 +752,7 @@
                                     <sortorder>2</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.DiskWrites[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -765,7 +765,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.ReadResponseTime[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -773,7 +773,7 @@
                                     <sortorder>2</sortorder>
                                     <color>277484</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.ResponseTime[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -781,7 +781,7 @@
                                     <sortorder>3</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.WriteResponseTime[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -795,7 +795,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.MBReads[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -803,7 +803,7 @@
                                     <sortorder>2</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.diskgroup.MBWritten[{#DISKGID}]</key>
                                     </item>
                                 </graph_item>
@@ -1112,6 +1112,7 @@
                             <type>TRAP</type>
                             <key>dellemc.pmax.perf.fedirector.SyscallCount[{#DIRID}]</key>
                             <delay>0</delay>
+                            <value_type>FLOAT</value_type>
                             <description>The total number of calls seen by this director.</description>
                             <applications>
                                 <application>
@@ -3102,7 +3103,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.CAPACITY[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3110,7 +3111,7 @@
                                     <sortorder>2</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.CONFIGURATION[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3118,7 +3119,7 @@
                                     <sortorder>3</sortorder>
                                     <color>2774A4</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.OVERALL[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3126,7 +3127,7 @@
                                     <sortorder>4</sortorder>
                                     <color>A54F10</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.SERVICE_LEVEL_COMPLIANCE[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3134,7 +3135,7 @@
                                     <sortorder>5</sortorder>
                                     <color>FC6EA3</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.STORAGE_GROUP_RESPONSE_TIME[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3142,7 +3143,7 @@
                                     <sortorder>6</sortorder>
                                     <color>6C59DC</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.health.SYSTEM_UTILIZATION[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3156,7 +3157,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.HostIOs[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3170,7 +3171,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.ReadResponseTime[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3178,7 +3179,7 @@
                                     <sortorder>2</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.WriteResponseTime[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3192,7 +3193,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.HostMBs[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3205,7 +3206,7 @@
                                     <sortorder>1</sortorder>
                                     <color>1A7C11</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.UsableCapacityTB[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
@@ -3213,7 +3214,7 @@
                                     <sortorder>2</sortorder>
                                     <color>F63100</color>
                                     <item>
-                                        <host>Template Storage DellEMC PowerMax</host>
+                                        <host>Storage - DellEMC PowerMax</host>
                                         <key>dellemc.pmax.perf.array.UsedUsableCapTB[{#ARRAYID}]</key>
                                     </item>
                                 </graph_item>
