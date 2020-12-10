@@ -11,7 +11,7 @@ The integration consists of two components, a Template that is imported into Zab
 
 ## Installation
 
-*Prerequisites*
+**Prerequisites**
 
 1.  Zabbix 5.x (It should be compatible with 4.x, however has not yet been tested)
 2.  Unisphere 9.2.0.0
@@ -24,7 +24,7 @@ The integration consists of two components, a Template that is imported into Zab
 
 Please be sure that the correct Py-zabbix module is installed, there are two with very similar names.
 
-*Installation*
+**Installation**
 
 Discovery Configuration 
 1.  Place the zabbix_powermax.py python script in your external scripts directory.
@@ -47,7 +47,7 @@ Statistics Collection Configuration Option 1 (CRON) -- Preferred
 Statistics Collection Configuration Option 2 (Zabbix Managed)
 1.  Configure an item in Zabbix that runs the collection script with the appropriate parameters every 5 minutes.
 
-*Troubleshooting*
+**Troubleshooting**
 
 * Common Troubleshooting
   * Check the serial/arrayid, it should start with leading 0's and be 12 Characters long.   For example HK0197900255 would be represented as 000197900255
@@ -60,8 +60,9 @@ Statistics Collection Configuration Option 2 (Zabbix Managed)
 * Stats Collection Issues 
   * Statistics are only collected if they are less than 5 minutes old (this is known as recency) you can tweak this setting in the script, but it will not increase the granularity of the statistics, just whether the script will collect and send them.  You may have to run the script multiple times in testing before data shows up in Zabbix.   The logs will tell you if the recency hasn't been met.  It is recommended to NOT change this setting unless you are testing something specific.
   * Validate that Diagnostic statistics are enabled on the PowerMax.  It is enabled by default but may have been disabled
-  
-## Currently Supported Objects
+
+## Implememted Objects  
+**Currently Supported Objects**
 -	General Array Health Scores
 -	Array Level Statistics (Capacity, overall IOs, Read/Write distribution, etc.)
 -	Frontend and Backend Director and Port level performance statistics
@@ -73,7 +74,7 @@ Statistics Collection Configuration Option 2 (Zabbix Managed)
 -	RDF Director and Port level performance statistics
 -	RDF performance statistics 
 
-## KPIs yet to be implemented (Please reach out if you are leveraging these features)
+**KPIs yet to be implemented** (Please reach out if you are leveraging these features)
 -	FICON statistics
 -	vVOL Storage Container Statistics
 -	IP Interface Statistics
