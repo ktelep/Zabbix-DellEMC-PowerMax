@@ -24,9 +24,7 @@ The integration consists of two components, a Template that is imported into Zab
 
 Please be sure that the correct Py-zabbix module is installed, there are two with very similar names.
 
-**Installation**
-
-Discovery Configuration 
+**Discovery Configuration**
 1.  Place the zabbix_powermax.py python script in your external scripts directory.
 2.  Update the zabbix_powermax.py script with the IP address and Port for the zabbix trapper on your server or agent.
 3.  Update the zabbix_powermax.py script log file location if you prefer a location besides the default, be sure this location is writable by the zabbix user.
@@ -43,7 +41,7 @@ zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <a
 9.  Link the DellEMC PowerMax Template to the newly created Host
 10.  Be Patient, it will take about 30-40 minutes for discovery to be completed, you can monitor the log file as the discovery takes place.   
 
-Statistics Collection Configuration Option 1 (CRON) -- Preferred
+**Statistics Collection Configuration Option 1 (CRON) -- Preferred**
 1.  As the Zabbix user test statistics collection with the following command:  
 ```sh
 zabbix_powermax.py --configpath <path to PyU4V.conf file> --array <array serial>
@@ -51,11 +49,10 @@ zabbix_powermax.py --configpath <path to PyU4V.conf file> --array <array serial>
 You should see the collections run in the log and data should appear in Zabbix.
 2.  Configure a cron job to run this command every 5 minutes.   Simple as that.
 
-Statistics Collection Configuration Option 2 (Zabbix Managed)
+**Statistics Collection Configuration Option 2 (Zabbix Managed)**
 1.  Configure an item in Zabbix that runs the collection script with the appropriate parameters every 5 minutes.
 
 **Troubleshooting**
-
 * Common Troubleshooting
   * Check the serial/arrayid, it should start with leading 0's and be 12 Characters long.   For example HK0197900255 would be represented as 000197900255
   * Review the log files, often changing the log level to logging.DEBUG will yield more information about connectivity and data collection issues.   
@@ -68,7 +65,7 @@ Statistics Collection Configuration Option 2 (Zabbix Managed)
   * Statistics are only collected if they are less than 5 minutes old (this is known as recency) you can tweak this setting in the script, but it will not increase the granularity of the statistics, just whether the script will collect and send them.  You may have to run the script multiple times in testing before data shows up in Zabbix.   The logs will tell you if the recency hasn't been met.  It is recommended to NOT change this setting unless you are testing something specific.
   * Validate that Diagnostic statistics are enabled on the PowerMax.  It is enabled by default but may have been disabled
 
-## Implememted Objects  
+## Implemented Objects  
 **Currently Supported Objects**
 -	General Array Health Scores
 -	Array Level Statistics (Capacity, overall IOs, Read/Write distribution, etc.)
