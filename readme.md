@@ -31,7 +31,9 @@ Discovery Configuration
 2.  Update the zabbix_powermax.py script with the IP address and Port for the zabbix trapper on your server or agent.
 3.  Update the zabbix_powermax.py script log file location if you prefer a location besides the default, be sure this location is writable by the zabbix user.
 2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation.   Store this file in a location accessible to the zabbix user.
-5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  ```sh zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>```
+5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  ```sh
+zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>
+```
 6.  Import the attached template into your zabbix installation
 7.  Create a new Host in Zabbix named: "PowerMax <array serial>"  CASE IS IMPORTANT
 8.  Create two Host Level Macros
