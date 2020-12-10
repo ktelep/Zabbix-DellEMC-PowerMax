@@ -36,7 +36,7 @@ Discovery Configuration
 zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>
 ```
 6.  Import the attached template into your zabbix installation
-7.  Create a new Host in Zabbix named: "PowerMax <array serial>"  CASE IS IMPORTANT
+7.  Create a new Host in Zabbix named: "PowerMax <array serial>"  **CASE IS IMPORTANT**
 8.  Create two Host Level Macros
   *  {$ARRAYID} - Serial of Array
   *  {$U4VPATH} - Path to PyU4V.conf file
@@ -44,7 +44,11 @@ zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <a
 10.  Be Patient, it will take about 30-40 minutes for discovery to be completed, you can monitor the log file as the discovery takes place.   
 
 Statistics Collection Configuration Option 1 (CRON) -- Preferred
-1.  As the Zabbix user test statistics collection with the following command:  zabbix_powermax.py --configpath <path to PyU4V.conf file> --array <array serial>, you should see the collections run in the log and data should appear in Zabbix.
+1.  As the Zabbix user test statistics collection with the following command:  
+```sh
+zabbix_powermax.py --configpath <path to PyU4V.conf file> --array <array serial>
+```
+You should see the collections run in the log and data should appear in Zabbix.
 2.  Configure a cron job to run this command every 5 minutes.   Simple as that.
 
 Statistics Collection Configuration Option 2 (Zabbix Managed)
