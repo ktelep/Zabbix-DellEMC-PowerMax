@@ -18,7 +18,7 @@ zabbix_port = 10051
 # Logging Level INFO as default, change to DEBUG for more
 # detailed info or troubleshooting
 log_level = logging.DEBUG
-log_file = "/tmp/zabbix_powermax.log"
+log_file = "./zabbix_powermax.log"
 
 # Host Base is the pattern used to define the Array in Zabbix
 # it is case-sensitive
@@ -84,7 +84,7 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
-    s = int(time.time())    # Uncomment for testing
+#    s = int(time.time())    # Uncomment for testing
     return s
 
 
@@ -167,33 +167,34 @@ def process_perf_results(metrics, category):
     ident = "-".join(id_values)
     cat = category.lower()
 
-    # Drop the ms from our timestamp, we've only got
-    # 5 minute granularity at best here
-    timestamp = fix_ts(metrics['timestamp'])
+    for metric_data in metrics['result']:
 
-    metric_data = metrics['result'][0]
+        # Drop the ms from our timestamp, we've only got
+        # 5 minute granularity at best here
+        timestamp = fix_ts(metric_data['timestamp'])
 
-    send_metrics = list()
-    # Bundle up all our metrics into a single list to send to Zabbix
-    for metric, score in metric_data.items():
-        if 'timestamp' in metric:    # ignore the second timestamp
-            continue
+        send_metrics = list()
+        # Bundle up all our metrics into a single list to send to Zabbix
+        for metric, score in metric_data.items():
+            if 'timestamp' in metric:    # ignore the second timestamp
+                continue
 
-        key = generate_metric_key(key_base, cat, metric, ident)
+            key = generate_metric_key(key_base, cat, metric, ident)
 
-        logger.debug(f"Built Metric: {key} for {host}")
-        send_metrics.append(ZabbixMetric(host, key, score, timestamp))
+            logger.debug(f"Built Metric: {key} for {host} - ts: {timestamp}")
+            send_metrics.append(ZabbixMetric(host, key, score, timestamp))
 
-    logger.debug("Sending Metrics")
+        logger.debug("Sending Metrics")
 
-    # Send the actual metrics list
-    res = ZabbixSender(zabbix_server=zabbix_ip,
-                       zabbix_port=zabbix_port).send(send_metrics)
-    logger.info(res)
+        # Send the actual metrics list
+        res = ZabbixSender(zabbix_server=zabbix_ip,
+                           zabbix_port=zabbix_port).send(send_metrics)
+        logger.info(res)
+
     logger.debug("Completed sending Metrics")
 
 
-def gather_dir_perf(configpath, arrayid, category):
+def gather_dir_perf(configpath, arrayid, category, hours=None):
     """ Collects Director Level Performance Statistics """
     logger = logging.getLogger('discovery')
     logger.info(f"Starting {category} Perf Stats Collection")
@@ -245,12 +246,25 @@ def gather_dir_perf(configpath, arrayid, category):
         dir_id = director['directorId']
         logger.info(f"Collecting for {category} director {dir_id}")
 
+        # this will be the kwargs passed to the stats function when called
+        metric_params = {'recency': metric_recency,
+                         'array_id': arrayid,
+                         'metrics': 'KPI',
+                         'director_id': dir_id}
+
+        # Handle where we want multiple hours of data
+        if hours:
+            recent_time = conn.performance.get_last_available_timestamp()
+            start_time, end_time = conn.performance.get_timestamp_by_hour(
+                end_time=recent_time, hours_difference=hours)
+
+            metric_params['start_time'] = start_time
+            metric_params['end_time'] = end_time
+
         # Gather metrics, but gracefully handle if they're not recent enough
         try:
-            metrics = func_map[category]['stats'](array_id=arrayid,
-                                                  director_id=dir_id,
-                                                  metrics='KPI',
-                                                  recency=metric_recency)
+            metrics = func_map[category]['stats'](**metric_params)
+
         except PyU4V.utils.exception.VolumeBackendAPIException:
             logger.info("Current metrics do not meet recency requirements")
             break
@@ -278,12 +292,8 @@ def gather_dir_perf(configpath, arrayid, category):
             logger.info(f"Collecting metrics for {category}"
                         f" {dir_id} port {port_id}")
             try:
-                metrics = func_map[port_cat]['stats'](
-                               director_id=dir_id,
-                               array_id=arrayid,
-                               port_id=port_id,
-                               metrics='KPI',
-                               recency=metric_recency)
+                metric_params['port_id'] = port_id
+                metrics = func_map[port_cat]['stats'](**metric_params)
             except PyU4V.utils.exception.VolumeBackendAPIException:
                 logger.info("Metrics not read, recency not met")
                 continue
@@ -295,7 +305,7 @@ def gather_dir_perf(configpath, arrayid, category):
     logger.info("Completed Director Performance Gathering")
 
 
-def gather_perf(configpath, arrayid, category):
+def gather_perf(configpath, arrayid, category, hours=None):
     """ Generalized non-Director performance gathering """
     logger = logging.getLogger('discovery')
     logger.info(f"Starting {category} Stats Collection ")
@@ -384,6 +394,15 @@ def gather_perf(configpath, arrayid, category):
     # this will be the kwargs passed to the stats function when called
     metric_params = {'recency': metric_recency,
                      'metrics': 'KPI'}
+
+    # Handle where we want multiple hours of data
+    if hours:
+        recent_time = conn.performance.get_last_available_timestamp()
+        start_time, end_time = conn.performance.get_timestamp_by_hour(
+            end_time=recent_time, hours_difference=hours)
+
+        metric_params['start_time'] = start_time
+        metric_params['end_time'] = end_time
 
     if 'Array' not in category:
         metric_params['array_id'] = arrayid
@@ -605,6 +624,9 @@ def main():
     parser.add_argument('--array', '-a', action='store', required=True,
                         help="Perform array stat or array discovery")
 
+    parser.add_argument('--hours', action='store', type=int, choices=range(25),
+                        help="Preload hours of data into Zabbix (Up to 24)")
+
     dgroup = parser.add_mutually_exclusive_group()
 
     dgroup.add_argument('--FEPort', action='store_true',
@@ -781,6 +803,8 @@ def main():
     else:
         if args.array:
             logger.info("Executing Stat collection")
+            if args.hours:
+                logger.info(f"Precollecting {args.hours} worth of statistics")
 
             result = gather_array_health(args.configpath, args.array)
 
@@ -789,7 +813,8 @@ def main():
                             'EDSDirector', 'IMDirector']:
                 result = gather_dir_perf(args.configpath,
                                          args.array,
-                                         category=dir_cat)
+                                         category=dir_cat,
+                                         hours=int(args.hours))
 
             # Get data for ALL other objects
             data_items = ['SRP', 'PortGroup', 'StorageGroup', 'Array',
@@ -800,7 +825,7 @@ def main():
 
             for perf_cat in data_items:
                 result = gather_perf(args.configpath, args.array,
-                                     category=perf_cat)
+                                     category=perf_cat, hours=int(args.hours))
 
     logger.info("Complete")
 

@@ -52,6 +52,18 @@ You should see the collections run in the log and data should appear in Zabbix.
 **Statistics Collection Configuration Option 2 (Zabbix Managed)**
 1.  Configure an item in Zabbix that runs the collection script with the appropriate parameters every 5 minutes.
 
+
+**Preloading Statistic Data**
+As the PowerMax will keep 24 hours worth of diagnostic data, you can preload up to the last 24 hours of data into Zabbix.  This is useful if either an issue causes the statistics job to not run correctly, or in a new installation where you want to validate everything is properly collected following discovery.  
+
+From the command line as the Zabbix user, run:
+```sh
+zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial> --hours <1-24>
+```
+
+Note- this WILL take longer than a typicaly statistics run, and if you have logging set to DEBUG, it will roll the logs depending on the array configuration.
+
+
 **Troubleshooting**
 * Common Troubleshooting
   * Check the serial/arrayid, it should start with leading 0's and be 12 Characters long.   For example HK0197900255 would be represented as 000197900255
