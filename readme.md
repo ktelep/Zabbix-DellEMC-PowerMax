@@ -47,6 +47,7 @@ zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <a
 zabbix_powermax.py --configpath <path to PyU4V.conf file> --array <array serial>
 ```
 You should see the collections run in the log and data should appear in Zabbix.
+
 2.  Configure a cron job to run this command every 5 minutes.   Simple as that.
 
 **Statistics Collection Configuration Option 2 (Zabbix Managed)**
@@ -54,7 +55,8 @@ You should see the collections run in the log and data should appear in Zabbix.
 
 
 **Preloading Statistic Data**
-As the PowerMax will keep 24 hours worth of diagnostic data, you can preload up to the last 24 hours of data into Zabbix.  This is useful if either an issue causes the statistics job to not run correctly, or in a new installation where you want to validate everything is properly collected following discovery.  
+
+As Unisphere will keep 24 hours worth of diagnostic data online, you can preload that data into Zabbix.  This is useful if either an issue causes the statistics job to not run correctly, or in a new installation where you want to validate everything is properly collected following discovery.  
 
 From the command line as the Zabbix user, run:
 ```sh

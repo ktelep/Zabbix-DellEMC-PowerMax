@@ -84,7 +84,7 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
-#    s = int(time.time())    # Uncomment for testing
+    #s = int(time.time())    # Uncomment for testing
     return s
 
 
@@ -814,7 +814,7 @@ def main():
                 result = gather_dir_perf(args.configpath,
                                          args.array,
                                          category=dir_cat,
-                                         hours=int(args.hours))
+                                         hours=args.hours)
 
             # Get data for ALL other objects
             data_items = ['SRP', 'PortGroup', 'StorageGroup', 'Array',
@@ -825,7 +825,7 @@ def main():
 
             for perf_cat in data_items:
                 result = gather_perf(args.configpath, args.array,
-                                     category=perf_cat, hours=int(args.hours))
+                                     category=perf_cat, hours=args.hours)
 
     logger.info("Complete")
 
