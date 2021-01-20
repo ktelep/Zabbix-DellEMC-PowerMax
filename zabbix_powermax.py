@@ -84,7 +84,7 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
-    #s = int(time.time())    # Uncomment for testing
+    # s = int(time.time())    # Uncomment for testing
     return s
 
 
@@ -686,6 +686,15 @@ def main():
     args = parser.parse_args()
 
     logger.info("Arguments parsed: %s" % str(args))
+
+    # Quick and dirty check for PyU4V.conf file existing
+    try:
+        f = open(args.configpath)
+    except IOError:
+        logger.error("Unable to access PyU4V.conf file, check path")
+        sys.exit()
+    finally:
+        f.close()
 
     result = None
     if args.discovery:
