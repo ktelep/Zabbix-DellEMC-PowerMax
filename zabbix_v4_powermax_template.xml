@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2021-01-20T20:55:57Z</date>
+    <date>2021-01-20T22:31:27Z</date>
     <groups>
         <group>
             <name>Templates/Modules</name>
@@ -9563,7 +9563,140 @@ https://github.com/ktelep/Zabbix-DellEMC-PowerMax</description>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes/>
-                    <graph_prototypes/>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>SG {#SGID} IOPs Comparison</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>1</show_triggers>
+                            <type>0</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.HostReads[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.HostWrites[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>SG {#SGID} Latency and IOPs</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>1</show_triggers>
+                            <type>0</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>1</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.ResponseTime[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.HostIOs[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>SG {#SGID} Read/Write Response Time</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>1</show_triggers>
+                            <type>0</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.ReadResponseTime[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.storagegroup.WriteResponseTime[{#SGID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                     <host_prototypes/>
                     <jmx_endpoint/>
                     <timeout>3s</timeout>
@@ -12283,7 +12416,188 @@ https://github.com/ktelep/Zabbix-DellEMC-PowerMax</description>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes/>
-                    <graph_prototypes/>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>PowerMax {#ARRAYID} Health Scores</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>0</show_triggers>
+                            <type>0</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.OVERALL[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.CAPACITY[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>000000</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.CONFIGURATION[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>F2AF00</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.SERVICE_LEVEL_COMPLIANCE[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>5</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>6EA204</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.STORAGE_GROUP_RESPONSE_TIME[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>6</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>65B6E6</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.health.SYSTEM_UTILIZATION[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>PowerMax {#ARRAYID} IOP Percentage Comparison</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>1</show_triggers>
+                            <type>1</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.PercentReads[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.PercentWrites[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Powermax {#ARRAYID} Response Time Comparison</name>
+                            <width>900</width>
+                            <height>200</height>
+                            <yaxismin>0.0000</yaxismin>
+                            <yaxismax>100.0000</yaxismax>
+                            <show_work_period>1</show_work_period>
+                            <show_triggers>1</show_triggers>
+                            <type>0</type>
+                            <show_legend>1</show_legend>
+                            <show_3d>0</show_3d>
+                            <percent_left>0.0000</percent_left>
+                            <percent_right>0.0000</percent_right>
+                            <ymin_type_1>0</ymin_type_1>
+                            <ymax_type_1>0</ymax_type_1>
+                            <ymin_item_1>0</ymin_item_1>
+                            <ymax_item_1>0</ymax_item_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>0076CE</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.ReadResponseTime[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <drawtype>0</drawtype>
+                                    <color>00447C</color>
+                                    <yaxisside>0</yaxisside>
+                                    <calc_fnc>2</calc_fnc>
+                                    <type>0</type>
+                                    <item>
+                                        <host>DellEMC - PowerMax</host>
+                                        <key>dellemc.pmax.perf.array.WriteResponseTime[{#ARRAYID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
                     <host_prototypes/>
                     <jmx_endpoint/>
                     <timeout>3s</timeout>
