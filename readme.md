@@ -13,7 +13,7 @@ The integration consists of two components, a Template that is imported into Zab
 
 **Prerequisites**
 
-1.  Zabbix 5.x (It should be compatible with 4.x, however has not yet been tested)
+1.  Zabbix 4.x or 5.x are supported, see provided templates
 2.  Unisphere 9.2.0.0
 3.  Python 3.6
 4.  Python Modules
@@ -28,7 +28,7 @@ Please be sure that the correct Py-zabbix module is installed, there are two wit
 1.  Place the zabbix_powermax.py python script in your external scripts directory.
 2.  Update the zabbix_powermax.py script with the IP address and Port for the zabbix trapper on your server or agent.
 3.  Update the zabbix_powermax.py script log file location if you prefer a location besides the default, be sure this location is writable by the zabbix user.
-2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation.   Store this file in a location accessible to the zabbix user.
+2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation. (https://pyu4v.readthedocs.io/en/latest/configuration.html)   Store this file in a location that is accessible and readable by the zabbix user.
 5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  
 ```sh
 zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>
@@ -63,7 +63,7 @@ From the command line as the Zabbix user, run:
 zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial> --hours <1-24>
 ```
 
-Note- this WILL take longer than a typicaly statistics run, and if you have logging set to DEBUG, it will roll the logs depending on the array configuration.
+Note- this WILL take longer than a typical statistics run, and if you have logging set to DEBUG, it will roll the logs depending on the array configuration.
 
 
 **Troubleshooting**
