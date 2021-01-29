@@ -24,7 +24,7 @@ log_file = "./zabbix_powermax.log"
 host_base = "PowerMax {arrayid}"
 
 # Base name for the keys created, you can customize if you don't like
-# the default
+# the default but you will need to update the template appropriately
 key_base = "dellemc.pmax."
 
 # Metric recency is used to determine how "fresh" our stats must be
@@ -698,8 +698,8 @@ def main():
     except IOError:
         logger.error("Unable to access PyU4V.conf file, check path")
         sys.exit()
-    finally:
-        f.close()
+
+    f.close()
 
     result = None
     if args.discovery:
