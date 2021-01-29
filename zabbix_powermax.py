@@ -3,7 +3,6 @@
 
 import sys
 import json
-import time
 import PyU4V
 import argparse
 import traceback
@@ -49,8 +48,13 @@ def setup_logging(log_file):
     my_logger = logging.getLogger('discovery')
     my_logger.setLevel(log_level)
 
-    handler = logging.handlers.RotatingFileHandler(
+    try:
+        handler = logging.handlers.RotatingFileHandler(
                           log_file, maxBytes=5120000, backupCount=5)
+    except PermissionError:
+        print(f"ERROR: Error writing to or creating {log_file}")
+        print("       Please verify permissions and path to file")
+        sys.exit()
 
     formatter = logging.Formatter(
         '%(asctime)s %(levelname)s %(process)d %(message)s')
@@ -84,6 +88,7 @@ def zabbix_safe_output(data):
 def fix_ts(timestamp):
     """ Remove milliseconds from timestamps """
     s, ms = divmod(int(timestamp), 1000)
+    # import time
     # s = int(time.time())    # Uncomment for testing
     return s
 
