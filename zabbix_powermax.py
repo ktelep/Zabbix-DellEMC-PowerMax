@@ -11,7 +11,7 @@ import logging.handlers
 from pyzabbix import ZabbixMetric, ZabbixSender
 
 # Update to include your Zabbix Server IP and Port
-zabbix_ip = "192.168.1.215"
+zabbix_ip = "192.168.1.64"
 zabbix_port = 10051
 
 # Logging Level INFO as default, change to DEBUG for more
@@ -159,8 +159,8 @@ def process_perf_results(metrics, category):
                     "RDFEmulation": ["rdf_emulation_id"],
                     "Host": ["host_id"],
                     "Initiator": ["initiator_id"],
-                    "RDFA": ["rdfa_group_id"],
-                    "RDFS": ["rdfs_group_id"],
+                    "RDFA": ["ra_group_id"],
+                    "RDFS": ["rs_group_id"],
                     "ISCSITarget": ['iscsi_target_id']
                     }
 
@@ -370,11 +370,11 @@ def gather_perf(configpath, arrayid, category, hours=None):
                 'RDFS':
                 {'keys': conn.performance.get_rdfs_keys,
                  'stats': conn.performance.get_rdfs_stats,
-                 'args': {'rdfs_group_id': 'rdfsGroupId'}},
+                 'args': {'rdfs_group_id': 'rsGroupId'}},
                 'RDFA':
                 {'keys': conn.performance.get_rdfa_keys,
                  'stats': conn.performance.get_rdfa_stats,
-                 'args': {'rdfa_group_id': 'rdfaGroupId'}},
+                 'args': {'rdfa_group_id': 'raGroupId'}},
                 'ISCSITarget':
                 {'keys': conn.performance.get_iscsi_target_keys,
                  'stats': conn.performance.get_iscsi_target_stats,
