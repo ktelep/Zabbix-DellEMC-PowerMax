@@ -17,7 +17,7 @@ The integration consists of two components, a Template that is imported into Zab
 2.  Unisphere 9.2.0.0
 3.  Python 3.6
 4.  Python Modules
-  1. PyU4V – Python Module for interaction with Unisphere for PowerMax
+  1. PyU4V 9.2.0.0 or higher – Python Module for interaction with Unisphere for PowerMax  
      * https://pypi.org/project/PyU4V/
   2. Py-zabbix – Python Module for interaction with Zabbix (pure python implementation for cross compatibility)
      * https://pypi.org/project/py-zabbix/
@@ -28,7 +28,8 @@ Please be sure that the correct Py-zabbix module is installed, there are two wit
 1.  Place the zabbix_powermax.py python script in your external scripts directory.
 2.  Update the zabbix_powermax.py script with the IP address and Port for the zabbix trapper on your server or agent.
 3.  Update the zabbix_powermax.py script log file location if you prefer a location besides the default, be sure this location is writable by the zabbix user.
-2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation. (https://pyu4v.readthedocs.io/en/latest/configuration.html)   Store this file in a location that is accessible and readable by the zabbix user.
+2.  Configure a PyU4V.conf file for you Unisphere for PowerMax installation as documented in the PyU4V documentation. (https://pyu4v.readthedocs.io/en/latest/configuration.html)   Store this file in a location that is accessible and readable by the zabbix user.  A sample is provided in the repo.
+4.  Run the test_PyU4V.py script in the same directory as your PyU4V.conf file to validate it is configured properly and diagnostic metrics are properly configured for the array.
 5.  Test the zabbix_powermax.py script as the zabbix user from the command line with the following command:  
 ```sh
 zabbix_powermax.py --discovery --configpath <path to PyU4V.conf file> --array <array serial>
