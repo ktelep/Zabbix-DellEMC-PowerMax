@@ -1,7 +1,6 @@
 import PyU4V
 import datetime
 
-print("Connecting to PyU4V")
 conn = PyU4V.U4VConn()
 
 print("Collecting Unisphere Version")
@@ -19,12 +18,25 @@ print()
 print("Confirming diagnostic data collection is enabled")
 print("---------------------------------------------------")
 test_data = []
+fall_back = False
 for i in array_list:
+    try:
+        pe = conn.performance.is_array_diagnostic_performance_registered()
+    except AttributeError:  # Handle if we're using an older module version
+        fall_back = True
+        if "92" in version[1]:
+            print("WARNING - Module version and Unisphere Version Mismatch")
+        pe = conn.performance.is_array_performance_registered()
+
     print(f"Checking {i} - ", end='')
-    if not conn.performance.is_array_diagnostic_performance_registered():
-        print("FAILED - Please Enable Diagnostic Performance Collection")
+    if not pe:
+        if fall_back:
+            print("FAILED - Manually confirm diagnostics (version mismatch)")
+        else:
+            print("FAILED - Check if diagnostics are enabled")
     else:
         print("OK")
+
     test_data.append(i)
 print()
 

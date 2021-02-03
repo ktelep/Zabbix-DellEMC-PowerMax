@@ -30,7 +30,7 @@ key_base = "dellemc.pmax."
 # Metric recency is used to determine how "fresh" our stats must be
 #  5 is the default (5 minutes), use 0 for testing.  Note this does
 # not change how often diagnostic data is collected ON the array
-metric_recency = 5
+metric_recency = 0
 
 
 def log_exception_handler(type, value, tb):
@@ -832,10 +832,14 @@ def main():
 
             # Get data for ALL other objects
             data_items = ['SRP', 'PortGroup', 'StorageGroup', 'Array',
-                          'Board', 'DiskGroup', 'BeEmulation',
-                          'FeEmulation', 'EDSEmulation', 'IMEmulation',
-                          'RDFEmulation', 'Host', 'Initiator', 'RDFS',
-                          'RDFA', 'ISCSITarget']
+                          'Board', 'DiskGroup', 'Host', 'Initiator', 
+                          'RDFS', 'RDFA', 'ISCSITarget']
+
+            """  # Commented out Emulations as we rarely need them
+            data_items = data_items + ['RDFEmulation', 'BeEmulation',
+                                       'FeEmulation', 'EDSEmulation',
+                                       'IMEmulation']
+            """
 
             for perf_cat in data_items:
                 result = gather_perf(args.configpath, args.array,
